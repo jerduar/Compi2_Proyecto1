@@ -26,7 +26,7 @@ action code
 terminal String ID, NUMERICO, CADENA, DATE, DATE_T, FALSE, TRUE;
 terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
 terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
-nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, EA, ER, N, RET, WHILE, OP, SET, OBS;
+nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, N, RET, WHILE, OP, SET, OBS, ARREGLO;
 
 precedence left AND;
 precedence left OR;
@@ -46,7 +46,6 @@ INICIAL     ::=   A:n1 {:
 
             RESULT = new Nodo("INICIO","");
             RESULT.addHijo(n1);
-            RESULT.DibujarAST();
 :};
 
 A           ::=   A:a L1:n1 {:
@@ -85,11 +84,6 @@ ASIG        ::=   ID:id DOS_PUNTOS E:e{:
                     RESULT = new Nodo("ASIG","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo(e);
-                :}
-                | ID:id DOS_PUNTOS LLA_IZQ LE:le LLA_DER{:
-                    RESULT = new Nodo("ASIG","");
-                    RESULT.addHijo("ID",id);
-                    RESULT.addHijo(le);
                 :}
                 | ID:id LLA_IZQ E:e1 LLA_DER DOS_PUNTOS E:e2{:
                     RESULT = new Nodo("ASIG","");
@@ -320,6 +314,12 @@ OP         ::=    INCREMENTO:in {:
                 :}
 ;
 
+ARREGLO     ::= LLA_IZQ LE:le LLA_DER{:
+                    RESULT = new Nodo("ARR");
+                    RESULT.addHijo(le);
+                :}
+;
+
 MESSAGE     ::=   MENSAJE PAR_IZQ E:e PAR_DER{:
                     RESULT = new Nodo("MSG","");
                     RESULT.addHijo(e);
@@ -460,5 +460,12 @@ E           ::=   E:e1 AND E:e2{:
                     Nodo h = new Nodo("POS_ARRE");
                     h.addHijo(new Nodo("ID",id),e);
                     RESULT.addHijo(h);
+                :}
+                | PAR_IZQ E:e PAR_DER{:
+                    RESULT = e;
+                :}
+                | ARREGLO:a{:
+                    RESULT = new Nodo("E");
+                    RESULT.addHijo(a);
                 :}
 ;

@@ -5,6 +5,7 @@
  */
 package GeneradorCSJ;
 
+import AST.Nodo;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java_cup.runtime.Symbol;
@@ -32,7 +33,8 @@ public class AnalizadorCSJ {
                 s = (Symbol)scan.next_token();
             }*/
             parser parser = new parser(scan);
-            parser.parse();
+            Nodo a = (Nodo)parser.parse().value;
+            a.DibujarAST();
             
             System.out.println("Finaliza la generación de CSJ...");
         } catch (Exception ex) {
