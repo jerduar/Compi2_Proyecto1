@@ -1,0 +1,366 @@
+package GeneradorCSJ;
+
+import java_cup.runtime.Symbol;
+import AST.Nodo;
+
+//PARSER PARA EL ARCHIVO DE ESCENARIOS
+parser code
+{://Codigo visible
+
+    public void syntax_error(Symbol s){
+        System.err.println(s);
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.err.println("Hubo un error en análisis irrecuperable :(");
+        System.err.println(s);
+    }
+
+:}
+
+action code
+{://Codigo de acciones
+      
+:}
+
+terminal String ID, NUMERICO, CADENA, DATE, DATE_T, FALSE, TRUE;
+terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
+terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
+nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, EA, ER, N, RET, WHILE, OP, SET, OBS;
+
+precedence left MAS, MENOS;
+precedence left MULT, DIV;
+precedence left INCREMENTO;
+precedence left DECREMENTO;
+precedence left IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE;
+precedence left AND;
+precedence left OR;
+precedence left NOT;
+
+start with INICIAL;
+
+INICIAL     ::=   A:n1 {:
+
+            RESULT = new Nodo("INICIO","");
+            RESULT.addHijo(n1);
+            RESULT.DibujarAST();
+:};
+
+A           ::=   A:a L1:n1 {:
+            RESULT = a;
+            RESULT.addHijo(n1);
+:}
+
+                | L1:n1 {:
+            RESULT = new Nodo("A","");
+            RESULT.addHijo(n1);
+:}
+;
+
+L1          ::=   SEN:sen {:
+                    RESULT = sen;
+                :}
+                | FUN:fun{:
+                    RESULT = fun;
+                :}
+;
+
+DEC         ::=   DIMV LID
+                | DIMV ID:id LLA_IZQ E:exp LLA_DER{:
+
+                    RESULT = new Nodo("DEC","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(exp);
+                :}
+                | DIMV ASIG:asig {:
+                    RESULT = new Nodo("DEC","");
+                    RESULT.addHijo(asig);
+                :}
+;
+
+ASIG        ::=   ID:id DOS_PUNTOS E:e{:
+                    RESULT = new Nodo("ASIG","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(e);
+                :}
+                | ID:id DOS_PUNTOS LLA_IZQ LE:le LLA_DER{:
+                    RESULT = new Nodo("ASIG","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(le);
+                :}
+                | ID:id LLA_IZQ E:e1 LLA_DER DOS_PUNTOS E:e2{:
+                    RESULT = new Nodo("ASIG","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(e1);
+                    RESULT.addHijo(e2);
+                :}
+;
+
+LE          ::=   LE:le COMA E:e{:
+                    RESULT = le;
+                    RESULT.addHijo(e);
+:}
+                | E:e {:
+                    RESULT = new Nodo("LE","");
+                    RESULT.addHijo(e);
+                :}
+;
+
+LID         ::=   LID:lid COMA ID:id{:
+                    RESULT = lid;
+                    RESULT.addHijo("ID",id);
+                :}
+                | ID:id {:
+                    RESULT = new Nodo("LID","LID");
+                    RESULT.addHijo("ID",id);
+                :}
+;
+
+/*LLAMADA     ::=   LLAMADA PUNTO M
+                | M
+;*/
+
+LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ CADENA:nombre PAR_DER PUNTO SET:set {:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("NOMBRE",nombre);
+                    RESULT.addHijo(set);
+                :}
+                | DOCUMENTO PUNTO OBTENER PAR_IZQ CADENA:nombre PAR_DER PUNTO OBS:obs{:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("NOMBRE",nombre);
+                    RESULT.addHijo(obs);
+                :}
+                | ID:id PUNTO CONTEO {:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(new Nodo("CONTEO"));
+                :}
+                | ID:id PUNTO SET:set{:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(set);
+                :}
+                | ID:id PUNTO OBS:obs{:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(obs);
+                :}
+                | ID:id PUNTO ATEXTO PAR_IZQ PAR_DER{:
+                    RESULT = new Nodo("LLAMADA","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo("ATEXTO","");
+                :}
+;
+
+SET         ::=   SETELEMENTO PAR_IZQ LE:le PAR_DER{:
+                    RESULT = new Nodo("SET","");
+                    RESULT.addHijo(le);
+                :}
+;
+                
+OBS         ::=   OBSERVADOR PAR_IZQ LE:e COMA FUNCION PAR_IZQ PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER PAR_DER{:
+                    RESULT = new Nodo("OBS","");
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(l_sen);
+                :}
+                | OBSERVADOR PAR_IZQ LE:le PAR_DER{:
+                    RESULT = new Nodo("OBS","");
+                    RESULT.addHijo(le);
+                :}
+;
+
+FUN         ::=   FUNCION ID:id PAR_IZQ LID:lid PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
+                    RESULT = new Nodo("FUN","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(lid);
+                    RESULT.addHijo(l_sen);
+                :}
+                | FUNCION ID:id PAR_IZQ PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
+                    RESULT = new Nodo("FUN","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(l_sen);
+                :}
+;
+
+L_SEN       ::=   L_SEN:l_sen SEN:sen{:
+                    RESULT = l_sen;
+                    RESULT.addHijo(sen);
+                :}
+                | SEN:sen{:
+                    RESULT = new Nodo("L_SEN","");
+                    RESULT.addHijo(sen);
+                :}
+;
+
+SEN         ::=   IF:si {:
+                    RESULT = si;
+                :}
+                | SWITCH:sw{:
+                    RESULT = sw;
+                :}
+                | DEC:dec PUNTO_COMA{:
+                    RESULT = dec;
+                :}
+                | ASIG:asig PUNTO_COMA{:
+                    RESULT = asig;
+                :}
+                | LLAMADA:llam PUNTO_COMA{:
+                    RESULT = llam;
+                :}
+                | FOR:para{:
+                    RESULT = para;
+                :}
+                | DETENER PUNTO_COMA{:
+                    RESULT = new Nodo("DET","");
+                :}
+                | SOUT:sout PUNTO_COMA{:
+                    RESULT = sout;
+                :}
+                | RET:ret{:
+                    RESULT = ret;
+                :}
+                | WHILE:wh{:
+                    RESULT = wh;
+                :}
+                | MESSAGE:ms PUNTO_COMA{:
+                    RESULT = ms;
+                :}
+;
+
+IF          ::=   SI PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
+                    RESULT = new Nodo("IF","");
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(l_sen);
+                :}
+                | SI PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER SINO LLA_IZQ L_SEN:l_sen2 LLA_DER{:
+                    RESULT = new Nodo("IF_ELSE","");
+                    RESULT.addHijo(l_sen);
+                    RESULT.addHijo(l_sen2);
+                :}
+;
+
+SWITCH      ::= SELECCIONAR PAR_IZQ E:e PAR_DER LLA_IZQ LCASO:lcaso LLA_DER{:
+                    RESULT = new Nodo("SWT","");
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(lcaso);
+                :}
+;
+
+LCASO       ::=   LCASO:lcaso CAS:cas{:
+                    RESULT = lcaso;
+                    RESULT.addHijo(cas);
+                :}
+                | CAS:cas{:
+                    RESULT = new Nodo("LCASO","");
+                    RESULT.addHijo(cas);
+                :}
+;
+
+CAS         ::=   CASO E:e DOS_PUNTOS L_SEN:l_sen{:
+                    RESULT = new Nodo("CASO","");
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(l_sen);
+                :}
+                | DEFECTO DOS_PUNTOS L_SEN:l_sen{:
+                    RESULT = new Nodo("DEF","");
+                    RESULT.addHijo(l_sen);
+                :}
+;
+
+SOUT        ::= IMPRIMIR PAR_IZQ E:e PAR_DER{:
+                    RESULT = new Nodo("SOUT","");
+                    RESULT.addHijo(e);
+                :}
+;
+
+RET         ::= RETORNAR E:e PUNTO_COMA{:
+                    RESULT = new Nodo("RET","");
+                    RESULT.addHijo(e);
+                :}
+;
+
+WHILE       ::= MIENTRAS PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
+                    RESULT = new Nodo("WHILE","");
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(l_sen);
+                :}
+;
+
+FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op LLA_IZQ L_SEN:l_sen LLA_DER{:
+                    RESULT = new Nodo("FOR","");
+                    RESULT.addHijo("ID",id);
+                    RESULT.addHijo(e1);
+                    RESULT.addHijo(e2);
+                    RESULT.addHijo(op);
+                    RESULT.addHijo(l_sen);
+                :}
+;
+
+OP         ::=    INCREMENTO:in {:
+                    RESULT = new Nodo("OP",in);
+                :}
+                | DECREMENTO:dec{:
+                    RESULT = new Nodo("OP",dec);
+                :}
+;
+
+MESSAGE     ::=   MENSAJE PAR_IZQ E:e PAR_DER{:
+                    RESULT = new Nodo("MSG","");
+                    RESULT.addHijo(e);
+                :}
+;
+
+E           ::=   E AND E
+                | E OR E
+                | NOT E
+                | ER
+;
+
+ER          ::=   ER IGUAL ER
+                | ER DIFERENTE ER
+                | ER MAYORQUE ER
+                | ER MENORQUE ER
+                | ER MAYORIGUALQUE ER
+                | ER MENORIGUALQUE ER
+                | EA
+;
+
+EA          ::=   EA MAS EA
+                | EA MENOS EA
+                | EA MULT EA
+                | EA DIV EA
+                | EA INCREMENTO
+                | EA DECREMENTO
+                | MENOS EA
+                | N
+;
+
+N           ::=   NUMERICO:num {:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("NUM",num);
+                :}
+                | CADENA:cad {:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("CAD",cad);
+                :}
+                | DATE:date{:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("DATE",date);
+                :}
+                | DATE_T:date_t{:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("DATE_T",date_t);
+                :}
+                | FALSE {:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("BOOL","false");
+                :}
+                | TRUE{:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo("BOOL","true");
+                :}
+                | LLAMADA:llamada {:
+                    RESULT = new Nodo("N");
+                    RESULT.addHijo(llamada);
+                :}
+;

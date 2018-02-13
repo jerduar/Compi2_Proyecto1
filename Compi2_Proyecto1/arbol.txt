@@ -1,0 +1,24 @@
+digraph Grafo{
+ Nodo0[label=" INICIO"];
+Nodo1[label=" A"];
+Nodo2[label=" FUN"];
+Nodo3[label="a ID"];
+Nodo2->Nodo3;
+Nodo4[label="LID LID"];
+Nodo5[label="a ID"];
+Nodo4->Nodo5;
+Nodo6[label="b ID"];
+Nodo4->Nodo6;
+Nodo2->Nodo4;
+Nodo7[label=" L_SEN"];
+Nodo8[label="DEC DEC"];
+Nodo9[label=" ASIG"];
+Nodo10[label="a ID"];
+Nodo9->Nodo10;
+Nodo8->Nodo9;
+Nodo7->Nodo8;
+Nodo2->Nodo7;
+Nodo1->Nodo2;
+Nodo0->Nodo1;
+
+}
