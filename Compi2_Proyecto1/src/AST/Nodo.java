@@ -74,8 +74,10 @@ public class Nodo {
      *
      * @param hijo Agregaun hijo recibiendo como parametro un nodo
      */
-    public void addHijo(Nodo hijo) {
-        this.getHijos().add(hijo);
+    public void addHijo(Nodo ... hijo) {
+        for(Nodo h: hijo){
+            hijos.add(h);
+        }
     }
 
     public void DibujarAST() {
@@ -108,7 +110,7 @@ public class Nodo {
             FileWriter escribir = new FileWriter(archivo_dot, false);
             escribir.write("digraph Grafo{\n " + cadena_dot + "\n}\n");
             escribir.close();
-            CrearImg("C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Proyecto1_201442819\\arbol.txt","C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Proyecto1_201442819\\grafo.png");
+            CrearImg("C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\arbol.txt","C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\grafo.png");
         } catch (Exception e) {
             System.err.println("Error al crear el DOT");
         } finally {

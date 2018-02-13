@@ -7,7 +7,7 @@ package compi2_proyecto1;
 
 /**
  *
- * @author jerdu
+ * @author jerduar
  */
 public class Compi2_Proyecto1 {
 

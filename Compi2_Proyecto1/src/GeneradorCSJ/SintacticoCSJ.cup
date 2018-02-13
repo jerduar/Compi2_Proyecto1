@@ -28,14 +28,17 @@ terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE,
 terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
 nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, EA, ER, N, RET, WHILE, OP, SET, OBS;
 
+precedence left AND;
+precedence left OR;
+precedence left NOT;
+precedence left IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE;
 precedence left MAS, MENOS;
 precedence left MULT, DIV;
 precedence left INCREMENTO;
 precedence left DECREMENTO;
-precedence left IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE;
-precedence left AND;
-precedence left OR;
-precedence left NOT;
+
+
+
 
 start with INICIAL;
 
@@ -120,35 +123,48 @@ LID         ::=   LID:lid COMA ID:id{:
                 | M
 ;*/
 
-LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ CADENA:nombre PAR_DER PUNTO SET:set {:
-                    RESULT = new Nodo("LLAMADA","");
-                    RESULT.addHijo("NOMBRE",nombre);
+LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
+                    RESULT = new Nodo("DOC_OBT_SET","");
+                    RESULT.addHijo(e);
                     RESULT.addHijo(set);
                 :}
-                | DOCUMENTO PUNTO OBTENER PAR_IZQ CADENA:nombre PAR_DER PUNTO OBS:obs{:
-                    RESULT = new Nodo("LLAMADA","");
-                    RESULT.addHijo("NOMBRE",nombre);
+                | DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO OBS:obs{:
+                    RESULT = new Nodo("DOC_OBT_OBS","");
+                    RESULT.addHijo(e);
                     RESULT.addHijo(obs);
                 :}
+                | DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER{:
+                    RESULT = new Nodo("DOC_OBT","");
+                    RESULT.addHijo(e);
+                :}
                 | ID:id PUNTO CONTEO {:
-                    RESULT = new Nodo("LLAMADA","");
+                    RESULT = new Nodo("ID_CONT","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo(new Nodo("CONTEO"));
                 :}
                 | ID:id PUNTO SET:set{:
-                    RESULT = new Nodo("LLAMADA","");
+                    RESULT = new Nodo("ID_SET","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo(set);
                 :}
                 | ID:id PUNTO OBS:obs{:
-                    RESULT = new Nodo("LLAMADA","");
+                    RESULT = new Nodo("ID_OBS","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo(obs);
                 :}
                 | ID:id PUNTO ATEXTO PAR_IZQ PAR_DER{:
-                    RESULT = new Nodo("LLAMADA","");
+                    RESULT = new Nodo("ATEXTO","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo("ATEXTO","");
+                :}
+                | ID:id PAR_IZQ PAR_DER{:
+                    RESULT = new Nodo("LLAMADA1","");
+                    RESULT.addHijo(new Nodo(id));
+                :}
+                | ID:id PAR_IZQ LE:le PAR_DER{:
+                    RESULT = new Nodo("LLAMADA2","");
+                    RESULT.addHijo(new Nodo("ID",id),le);
+                    
                 :}
 ;
 
@@ -286,7 +302,7 @@ WHILE       ::= MIENTRAS PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                 :}
 ;
 
-FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op LLA_IZQ L_SEN:l_sen LLA_DER{:
+FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT = new Nodo("FOR","");
                     RESULT.addHijo("ID",id);
                     RESULT.addHijo(e1);
@@ -310,57 +326,139 @@ MESSAGE     ::=   MENSAJE PAR_IZQ E:e PAR_DER{:
                 :}
 ;
 
-E           ::=   E AND E
-                | E OR E
-                | NOT E
-                | ER
-;
-
-ER          ::=   ER IGUAL ER
-                | ER DIFERENTE ER
-                | ER MAYORQUE ER
-                | ER MENORQUE ER
-                | ER MAYORIGUALQUE ER
-                | ER MENORIGUALQUE ER
-                | EA
-;
-
-EA          ::=   EA MAS EA
-                | EA MENOS EA
-                | EA MULT EA
-                | EA DIV EA
-                | EA INCREMENTO
-                | EA DECREMENTO
-                | MENOS EA
-                | N
-;
-
-N           ::=   NUMERICO:num {:
-                    RESULT = new Nodo("N");
+E           ::=   E:e1 AND E:e2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("AND");
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                | E:e1 OR E:e2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("OR");
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                | NOT E:e{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("NOT");
+                    n.addHijo(e);
+                    RESULT.addHijo(n);
+                :}
+                |   E:er1 IGUAL E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("==");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:er1 DIFERENTE E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("!=");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:er1 MAYORQUE E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo(">");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:er1 MENORQUE E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("<");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:er1 MAYORIGUALQUE E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo(">=");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:er1 MENORIGUALQUE E:er2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("<=");
+                    n.addHijo(er1,er2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea1 MAS E:ea2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("+");
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea1 MENOS E:ea2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("-");
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea1 MULT E:ea2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("*");
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea1 DIV E:ea2{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("/");
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea INCREMENTO{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("--");
+                    RESULT.addHijo(ea,n);
+                :}
+                | E:ea DECREMENTO{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("++");
+                    RESULT.addHijo(ea,n);
+                :}
+                | MENOS E:ea{:
+                    RESULT = new Nodo("E");
+                    Nodo n = new Nodo("-");
+                    RESULT.addHijo(n,ea);
+                :}
+                | N:n {:
+                    RESULT = n;
+                :}
+                |  NUMERICO:num {:
+                    RESULT = new Nodo("E");
                     RESULT.addHijo("NUM",num);
                 :}
                 | CADENA:cad {:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
+                    cad = cad.substring(1,cad.length()-1);
                     RESULT.addHijo("CAD",cad);
                 :}
                 | DATE:date{:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
                     RESULT.addHijo("DATE",date);
                 :}
                 | DATE_T:date_t{:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
                     RESULT.addHijo("DATE_T",date_t);
                 :}
                 | FALSE {:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
                     RESULT.addHijo("BOOL","false");
                 :}
                 | TRUE{:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
                     RESULT.addHijo("BOOL","true");
                 :}
                 | LLAMADA:llamada {:
-                    RESULT = new Nodo("N");
+                    RESULT = new Nodo("E");
                     RESULT.addHijo(llamada);
+                :}
+                | ID:id {:
+                    RESULT = new Nodo("E");
+                    RESULT.addHijo(new Nodo("ID",id));
+                :}
+                | ID:id LLA_IZQ E:e LLA_DER{:
+                    RESULT = new Nodo("E");
+                    Nodo h = new Nodo("POS_ARRE");
+                    h.addHijo(new Nodo("ID",id),e);
+                    RESULT.addHijo(h);
                 :}
 ;
