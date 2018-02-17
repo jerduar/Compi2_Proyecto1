@@ -1,0 +1,288 @@
+package GeneradorCCSS;
+
+import java_cup.runtime.Symbol;
+import javax.swing.JOptionPane;
+import AST.Nodo;
+
+//PARSER PARA EL ARCHIVO DE ESCENARIOS
+parser code
+{://Codigo visible
+
+    /* Metodo para errores sintacticos*/
+	
+    public void sintax_error(Symbol s){
+        System.out.println("Error en la linea: " + (s.right+1) + " Columna " + s.left + ". Token #" + s.value + " no reconocido.");
+    }
+
+    /* Método errores fatales */
+
+    public void errores_fatales(Symbol s) throws Exception{
+        JOptionPane.showMessageDialog(null, "Error Sintactico en la linea: " + (s.right+1) + " Columna " + s.left + ". Token #" + s.value + " no reconocido.");
+    }
+
+:}
+
+action code
+{://Codigo de acciones
+    
+:}
+
+terminal String ID, NUM, TRUE, FALSE, CADENA;
+terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, t_alineado, t_texto, t_formato, t_letra, t_tamTex, t_fondoElemento, t_autoredimension, t_visible, t_borde, t_opaque, t_colorText, t_id, t_grupo, t_negrilla, t_cursiva, t_mayuscula, t_minuscula, t_capital; 
+non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB;
+
+precedence left MAS, MENOS;
+precedence left POR, DIV; 
+
+start with INICIO;
+
+INICIO            ::= L_DEF:lista
+                        {:
+                            
+                        :}
+;
+
+L_DEF    ::= L_DEF:lista DEF:def
+                        {:
+                            
+                        :}
+                |   DEF:def
+                        {:
+                            //RESULT = def;
+                        :}
+;
+
+DEF      ::= ID:id COR_IZQ L_ATRIB:lista COR_DER
+                        {:
+                            /*Nodo padre = new Nodo("DEF");
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(lista);
+                            RESULT = padre;*/
+                        :}
+                |   ID:id COR_IZQ COR_DER
+                        {:
+                            /*Nodo padre = new Nodo("DEF");
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
+                            RESULT = padre;*/
+                        :}
+;
+
+L_ATRIB             ::= L_ATRIB:lista ATRIB:x
+                        {:
+                            /*Nodo padre = new Nodo("L_ATRIB");
+                            padre.getListaDeHijos().add(lista);
+                            padre.getListaDeHijos().add(x);
+                            RESULT = padre;*/
+                        :}
+                |   ATRIB:x
+                        {:
+                            //RESULT = x;
+                        :}
+;
+
+ATRIB               ::= t_grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:lista
+                        {:
+                            /*Nodo padre = new Nodo("ATRIB");
+                            padre.getListaDeHijos().add(new Nodo("GRUPO"));
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(lista);
+                            RESULT = padre;*/
+                        :}
+                |   t_id PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:lista
+                        {:
+                            /*Nodo padre = new Nodo("X");
+                            padre.getListaDeHijos().add(new Nodo("ID"));
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(lista);
+                            RESULT = padre;*/
+                        :}
+                |   t_grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("ATRIB");
+                            padre.getListaDeHijos().add(new Nodo("GRUPO"));
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
+                            RESULT = padre;*/
+                        :}
+                |   t_id PAR_IZQ ID:id PAR_DER PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("ATRIB");
+                            padre.getListaDeHijos().add(new Nodo("ID"));
+                            padre.getListaDeHijos().add(new Nodo(id));
+                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
+                            RESULT = padre;*/
+                        :}
+;
+
+L_SEN    ::= L_SEN:lista SEN:sent
+                        {:
+                            /*Nodo padre = new Nodo("L_SEN");
+                            padre.getListaDeHijos().add(lista);
+                            padre.getListaDeHijos().add(sent);
+                            RESULT = padre;*/
+                        :}
+                |   SEN:sent
+                        {:
+                            //RESULT = sent;
+                        :}
+;
+
+SEN       ::= t_alineado IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("ALINEADO");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_texto IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("TEXTO");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_formato IGUAL L_FORM:lista PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("FORM");
+                            padre.getListaDeHijos().add(lista);
+                            RESULT = padre;*/
+                        :}
+                |   t_letra IGUAL E:exp PUNTO_COMA
+                        {:
+                           /* Nodo padre = new Nodo("LETRA");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_tamTex IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("TAM_TEX");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_fondoElemento IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("FONDO_ELEMENTO");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_autoredimension IGUAL COR_IZQ E:exp1 COMA E:exp2 COR_DER PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("AUTOREDIMENSION");
+                            padre.getListaDeHijos().add(exp1);
+                            padre.getListaDeHijos().add(exp2);
+                            RESULT = padre;*/
+                        :}
+                |   t_visible IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("VISIBLE");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_borde IGUAL COR_IZQ E:exp1 COMA E:exp2 COMA E:exp3 COR_DER PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("BORDE");
+                            padre.getListaDeHijos().add(exp1);
+                            padre.getListaDeHijos().add(exp2);
+                            padre.getListaDeHijos().add(exp3);
+                            RESULT = padre;*/
+                        :}
+                |   t_opaque IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("OPAQUE");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   t_colorText IGUAL E:exp PUNTO_COMA
+                        {:
+                            /*Nodo padre = new Nodo("COLOR_TEXT");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+;
+
+L_FORM       ::= L_FORM:lista COMA FORM:formato
+                        {:
+                            /*Nodo padre = new Nodo("L_FORM");
+                            padre.getListaDeHijos().add(lista);
+                            padre.getListaDeHijos().add(formato);
+                            RESULT = padre;*/
+                        :}
+                |   FORM:formato
+                        {:
+                            //RESULT = formato;
+                        :}
+;
+
+FORM         ::= t_mayuscula:formato
+                        {:
+                            //RESULT = new Nodo(formato);
+                        :}
+                |   t_minuscula:formato
+                        {:
+                            //RESULT = new Nodo(formato);
+                        :}
+                |   t_cursiva:formato
+                        {:
+                            //RESULT = new Nodo(formato);
+                        :}
+                |   t_negrilla:formato
+                        {:
+                            //RESULT = new Nodo(formato);
+                        :}
+                |   t_capital:formato
+                        {:
+                            //RESULT = new Nodo(formato);
+                        :}
+;
+
+E             ::= E:izq MAS:signo E:der
+                        {: 
+                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
+                            Nodo padre = new Nodo(signo);
+                            padre.getListaDeHijos().add(izq);
+                            padre.getListaDeHijos().add(der);
+                            RESULT = padre;*/
+                        :}
+                |   E:izq MENOS:signo E:der
+                        {: 
+                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
+                            Nodo padre = new Nodo(signo);
+                            padre.getListaDeHijos().add(izq);
+                            padre.getListaDeHijos().add(der);
+                            RESULT = padre;*/
+                        :}
+                |   E:izq POR:signo E:der
+                        {: 
+                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
+                            Nodo padre = new Nodo(signo);
+                            padre.getListaDeHijos().add(izq);
+                            padre.getListaDeHijos().add(der);
+                            RESULT = padre;*/
+                        :}
+                |   E:izq DIV:signo E:der
+                        {: 
+                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
+                            Nodo padre = new Nodo(signo);
+                            padre.getListaDeHijos().add(izq);
+                            padre.getListaDeHijos().add(der);
+                            RESULT = padre;*/
+                        :}
+                |   MENOS:signo E:exp 
+                        {: 
+                            /*System.out.println("-"+exp.getTexto());
+                            Nodo padre = new Nodo("NEGATIVO");
+                            padre.getListaDeHijos().add(exp);
+                            RESULT = padre;*/
+                        :}
+                |   PAR_IZQ E:exp PAR_DER   
+                        {: /*RESULT = exp;*/ :}
+                |   ID:id           
+                        {: /*RESULT = new Nodo(id);*/ :}
+                |   NUM:num   
+                        {: /*RESULT = new Nodo(num);*/ :}
+                |   TRUE:tt  
+                        {: /*RESULT = new Nodo(tt);*/ :}
+                |   FALSE:tf   
+                        {: /*RESULT = new Nodo(tf);*/ :}
+                |   CADENA:cad   
+                        {: /*RESULT = new Nodo(cad.substring(1, cad.length()-1));*/ :}
+;

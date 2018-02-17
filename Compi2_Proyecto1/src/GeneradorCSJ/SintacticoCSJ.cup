@@ -8,12 +8,12 @@ parser code
 {://Codigo visible
 
     public void syntax_error(Symbol s){
-        System.err.println(s);
+        System.err.println("Error " + s.value + " " + s.left);
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.err.println("Hubo un error en análisis irrecuperable :(");
-        System.err.println(s);
+        //System.err.println(s);
     }
 
 :}
@@ -235,6 +235,7 @@ SEN         ::=   IF:si {:
                 | MESSAGE:ms PUNTO_COMA{:
                     RESULT = ms;
                 :}
+                |error:error PUNTO_COMA {::}
 ;
 
 IF          ::=   SI PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:

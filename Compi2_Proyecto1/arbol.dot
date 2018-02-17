@@ -1,3 +1,0 @@
-Nodo0[label="INICIO"];
-Nodo1[label="A"];
-Nodo0->Nodo1;

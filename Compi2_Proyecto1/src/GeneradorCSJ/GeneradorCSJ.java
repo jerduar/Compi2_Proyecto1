@@ -21,7 +21,7 @@ public class GeneradorCSJ {
             String ruta = "src/GeneradorCSJ/";
             String opcFlex[] = { ruta + "LexicoCSJ.flex", "-d", ruta };
             jflex.Main.generate(opcFlex);
-            String opcCUP[] = { "-destdir", ruta, "-parser", "parser", ruta + "SintacticoCSJ.cup" };
+            String opcCUP[] = { "-destdir", ruta, "-parser", "parserCSJ","-symbols","symCSJ",  ruta + "SintacticoCSJ.cup"};
             java_cup.Main.main(opcCUP);
         } catch (Exception e) {
             e.printStackTrace();
