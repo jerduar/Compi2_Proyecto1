@@ -1,9 +1,12 @@
+//prueba de comentario
+
 funcion prueba(a,b,c){
 	si(a > b && c*9 >= 5){
 		dIMV a : a{5};
 	}sino{
 		para(a:10;a > 20;++){
 			Dimv b : 'True';
+                        a{4}: y{3};
 		}
 	}
 }

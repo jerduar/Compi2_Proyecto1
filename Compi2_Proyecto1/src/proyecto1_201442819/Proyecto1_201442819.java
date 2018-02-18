@@ -5,7 +5,11 @@
  */
 package proyecto1_201442819;
 
-import Interfaz.Pruebas;
+import GeneradorCCSS.AnalizadorCCSS;
+import GeneradorCJS.AnalizadorCJS;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,7 +21,12 @@ public class Proyecto1_201442819 {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        new Pruebas().setVisible(true);
+        try {
+            AnalizadorCJS.AnalizarCJS("src\\GeneradorCJS\\prueba_js.cjs");
+            AnalizadorCCSS.AnalizarCCSS("src\\GeneradorCCSS\\prueba_css.ccss");
+        } catch (IOException ex) {
+            Logger.getLogger(Proyecto1_201442819.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }

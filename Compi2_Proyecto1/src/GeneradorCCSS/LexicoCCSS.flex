@@ -49,21 +49,21 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 %%
 //Fin 
     
-<YYINITIAL>"["                     {return new Symbol(symCCSS.COR_IZQ, yycolumn, yyline, yytext()); }
-<YYINITIAL>"]"                     {return new Symbol(symCCSS.COR_DER, yycolumn, yyline, yytext());}
-<YYINITIAL>"("                     {return new Symbol(symCCSS.PAR_IZQ, yycolumn, yyline, yytext());}
-<YYINITIAL>")"                     {return new Symbol(symCCSS.PAR_DER, yycolumn, yyline, yytext());}
-<YYINITIAL>";"                     {return new Symbol(symCCSS.PUNTO_COMA, yycolumn, yyline, yytext());}
-<YYINITIAL>":="                    {return new Symbol(symCCSS.IGUAL, yycolumn, yyline, yytext());}
-<YYINITIAL>","                     {return new Symbol(symCCSS.COMA, yycolumn, yyline, yytext());}
-<YYINITIAL>"+"                     {return new Symbol(symCCSS.MAS, yycolumn, yyline, yytext());}
-<YYINITIAL>"-"                     {return new Symbol(symCCSS.MENOS, yycolumn, yyline, yytext());}
-<YYINITIAL>"*"                     {return new Symbol(symCCSS.POR, yycolumn, yyline, yytext());}
-<YYINITIAL>"/"                     {return new Symbol(symCCSS.DIV, yycolumn, yyline, yytext());}
+<YYINITIAL>"["                      {return new Symbol(symCCSS.COR_IZQ, yycolumn, yyline, yytext()); }
+<YYINITIAL>"]"                      {return new Symbol(symCCSS.COR_DER, yycolumn, yyline, yytext());}
+<YYINITIAL>"("                      {return new Symbol(symCCSS.PAR_IZQ, yycolumn, yyline, yytext());}
+<YYINITIAL>")"                      {return new Symbol(symCCSS.PAR_DER, yycolumn, yyline, yytext());}
+<YYINITIAL>";"                      {return new Symbol(symCCSS.PUNTO_COMA, yycolumn, yyline, yytext());}
+<YYINITIAL>":="                     {return new Symbol(symCCSS.IGUAL, yycolumn, yyline, yytext());}
+<YYINITIAL>","                      {return new Symbol(symCCSS.COMA, yycolumn, yyline, yytext());}
+<YYINITIAL>"+"                      {return new Symbol(symCCSS.MAS, yycolumn, yyline, yytext());}
+<YYINITIAL>"-"                      {return new Symbol(symCCSS.MENOS, yycolumn, yyline, yytext());}
+<YYINITIAL>"*"                      {return new Symbol(symCCSS.POR, yycolumn, yyline, yytext());}
+<YYINITIAL>"/"                      {return new Symbol(symCCSS.DIV, yycolumn, yyline, yytext());}
 
-<YYINITIAL>"negrilla"          {return new Symbol(symCCSS.t_negrilla, yycolumn, yyline, yytext());}
-<YYINITIAL>"cursiva"           {return new Symbol(symCCSS.t_cursiva, yycolumn, yyline, yytext());}
-<YYINITIAL>"mayuscula"         {return new Symbol(symCCSS.t_mayuscula, yycolumn, yyline, yytext());}
+<YYINITIAL>"negrilla"               {return new Symbol(symCCSS.t_negrilla, yycolumn, yyline, yytext());}
+<YYINITIAL>"cursiva"                {return new Symbol(symCCSS.t_cursiva, yycolumn, yyline, yytext());}
+<YYINITIAL>"mayuscula"              {return new Symbol(symCCSS.t_mayuscula, yycolumn, yyline, yytext());}
 <YYINITIAL>"minuscula"         {return new Symbol(symCCSS.t_minuscula, yycolumn, yyline, yytext());}
 <YYINITIAL>"capital-t"         {return new Symbol(symCCSS.t_capital, yycolumn, yyline, yytext());}
 <YYINITIAL>"true"              {return new Symbol(symCCSS.TRUE, yycolumn, yyline, yytext());}
@@ -81,6 +81,7 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 <YYINITIAL>"colortext"         {return new Symbol(symCCSS.t_colorText, yycolumn, yyline, yytext());}
 <YYINITIAL>"id"                {return new Symbol(symCCSS.t_id, yycolumn, yyline, yytext());}
 <YYINITIAL>"grupo"             {return new Symbol(symCCSS.t_grupo, yycolumn, yyline, yytext());}
+
     
 <YYINITIAL>{NUM}             {return new Symbol(symCCSS.NUM, yycolumn, yyline, yytext());}
 <YYINITIAL>{ID}                 {return new Symbol(symCCSS.ID, yycolumn, yyline, yytext());}

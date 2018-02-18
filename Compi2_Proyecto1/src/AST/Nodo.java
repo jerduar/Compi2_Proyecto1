@@ -5,13 +5,14 @@
  */
 package AST;
 
+import GeneradorCJS.ConsCJS;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
 /**
  *
- * @author jerdu
+ * @author jerduar
  */
 public class Nodo {
 
@@ -20,6 +21,7 @@ public class Nodo {
     private ArrayList<Nodo> hijos;
     private static int contador;
     private static String cadena_dot;
+    private Integer cod;
 
     public Nodo(String id, String lexema) {
         this.id = id;
@@ -27,8 +29,14 @@ public class Nodo {
         this.hijos = new ArrayList<>();
     }
     
-    public Nodo(String id){
-        this.id = id;
+    public Nodo(Integer cod, String valor){
+        this.cod = cod;
+        this.lexema = valor;
+        this.hijos = new ArrayList<>();
+    }
+    
+    public Nodo(Integer cod){
+        this.cod = cod;
         this.lexema = "";
         this.hijos = new ArrayList<>();
     }
@@ -66,7 +74,7 @@ public class Nodo {
      * @param id
      * @param lexema
      */
-    public void addHijo(String id, String lexema) {
+    public void addHijo(Integer id, String lexema) {
         getHijos().add(new Nodo(id, lexema));
     }
 
@@ -84,15 +92,13 @@ public class Nodo {
         cadena_dot = "";
         contador = 0;
         Visitar(this);
-        //System.out.println(cadena_dot);
         CrearDot();
     }
 
     private String Visitar(Nodo e) {
         String id_padre = "Nodo" + contador;
         contador++;
-        cadena_dot += id_padre + "[label=\"" + e.lexema + " " + e.id + "\"];\n";
-        //System.out.println("cadena: " + cadena_dot);
+        cadena_dot += id_padre + "[label=\"" + ConsCJS.RetornStringCSJ(e.cod) + " " + e.lexema + "\"];\n";
         for (Nodo hijo : e.getHijos()) {
             if (hijo != null) {
                 String cad = id_padre + "->" + Visitar(hijo) + ";\n";
@@ -138,6 +144,20 @@ public class Nodo {
      */
     public ArrayList<Nodo> getHijos() {
         return hijos;
+    }
+
+    /**
+     * @return the cod
+     */
+    public int getCod() {
+        return cod;
+    }
+
+    /**
+     * @param cod the cod to set
+     */
+    public void setCod(int cod) {
+        this.cod = cod;
     }
 
 }

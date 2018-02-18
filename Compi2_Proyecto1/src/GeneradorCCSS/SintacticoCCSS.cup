@@ -28,7 +28,9 @@ action code
 :}
 
 terminal String ID, NUM, TRUE, FALSE, CADENA;
-terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, t_alineado, t_texto, t_formato, t_letra, t_tamTex, t_fondoElemento, t_autoredimension, t_visible, t_borde, t_opaque, t_colorText, t_id, t_grupo, t_negrilla, t_cursiva, t_mayuscula, t_minuscula, t_capital; 
+terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, t_alineado, t_texto;
+terminal String t_formato, t_letra, t_tamTex, t_fondoElemento, t_autoredimension, t_visible, t_borde, t_opaque, t_colorText, t_id;
+terminal String t_grupo, t_negrilla, t_cursiva, t_mayuscula, t_minuscula, t_capital, t_tamelemento; 
 non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB;
 
 precedence left MAS, MENOS;
