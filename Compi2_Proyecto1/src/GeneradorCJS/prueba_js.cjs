@@ -9,6 +9,10 @@ funcion prueba(a,b,c){
                         a{4}: y{3};
 		}
 	}
+
+        mientras(b>45){}
+             
+        
 }
 
 funcion prueba2(ab,cd){
@@ -23,6 +27,16 @@ funcion prueba2(ab,cd){
 	doc.Observador("listo",funcion(){
 		Dimv abc : 'true';
 	});
+
+        para(b:0;b<=29;++){
+            
+        }
+
+        Selecciona(ab){
+            caso 34:
+            caso 56:
+            defecto:
+        }
 }
 
 Dimv a : 19 + comida(4,comida);

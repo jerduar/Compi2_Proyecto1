@@ -44,19 +44,20 @@ start with INICIAL;
 
 INICIAL     ::=   A:n1 {:
 
-            RESULT = new Nodo(ConsCJS.INICIO);
-            RESULT.addHijo(n1);
-:};
+                    RESULT = new Nodo(ConsCJS.INICIO);
+                    RESULT.addHijo(n1);
+                :}
+;
 
 A           ::=   A:a L1:n1 {:
-            RESULT = a;
-            RESULT.addHijo(n1);
-:}
+                    RESULT = a;
+                    RESULT.addHijo(n1);
+                :}
 
                 | L1:n1 {:
-            RESULT = new Nodo(ConsCJS.L1);
-            RESULT.addHijo(n1);
-:}
+                    RESULT = new Nodo(ConsCJS.L1);
+                    RESULT.addHijo(n1);
+                :}
 ;
 
 L1          ::=   SEN:sen {:
@@ -185,10 +186,21 @@ FUN         ::=   FUNCION ID:id PAR_IZQ LID:lid PAR_DER LLA_IZQ L_SEN:l_sen LLA_
                     RESULT.addHijo(lid);
                     RESULT.addHijo(l_sen);
                 :}
+                |FUNCION ID:id PAR_IZQ LID:lid PAR_DER LLA_IZQ LLA_DER{:
+                    RESULT = new Nodo(ConsCJS.FUN);
+                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(lid);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
+                :}
                 | FUNCION ID:id PAR_IZQ PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FUN);
                     RESULT.addHijo(ConsCJS.ID,id);
                     RESULT.addHijo(l_sen);
+                :}
+                | FUNCION ID:id PAR_IZQ PAR_DER LLA_IZQ LLA_DER{:
+                    RESULT = new Nodo(ConsCJS.FUN);
+                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
                 :}
 ;
 
@@ -276,6 +288,14 @@ CAS         ::=   CASO E:e DOS_PUNTOS L_SEN:l_sen{:
                     RESULT = new Nodo(ConsCJS.DEF);
                     RESULT.addHijo(l_sen);
                 :}
+                | CASO E:e DOS_PUNTOS {:
+                    RESULT = new Nodo(ConsCJS.DEF);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
+                :}
+                | DEFECTO DOS_PUNTOS{:
+                    RESULT = new Nodo(ConsCJS.DEF);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
+                :}
 ;
 
 SOUT        ::= IMPRIMIR PAR_IZQ E:e PAR_DER{:
@@ -295,6 +315,11 @@ WHILE       ::= MIENTRAS PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT.addHijo(e);
                     RESULT.addHijo(l_sen);
                 :}
+                |MIENTRAS PAR_IZQ E:e PAR_DER LLA_IZQ LLA_DER{:
+                    RESULT = new Nodo(ConsCJS.WHILE);
+                    RESULT.addHijo(e);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
+                :}
 ;
 
 FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
@@ -304,6 +329,14 @@ FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:
                     RESULT.addHijo(e2);
                     RESULT.addHijo(op);
                     RESULT.addHijo(l_sen);
+                :}
+                |PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op PAR_DER LLA_IZQ LLA_DER{:
+                    RESULT = new Nodo(ConsCJS.FOR);
+                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(e1);
+                    RESULT.addHijo(e2);
+                    RESULT.addHijo(op);
+                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
                 :}
 ;
 

@@ -11,6 +11,7 @@ GRUPO (grupo_areas_2);
 Formato := mayuscula, NEGRILLA, capital-t;
 Letra := "Courier New";
 Tamtex := 13;
+Autoredimension := [12,Vertical];
 
 
 ID (identificador_1);

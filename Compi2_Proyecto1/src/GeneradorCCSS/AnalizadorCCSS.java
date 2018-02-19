@@ -32,21 +32,13 @@ public class AnalizadorCCSS {
             System.err.println("No es posible evaluar una cadena en blanco.");
             return;
         }
-        
-        //System.out.println(texto);
         try {
             
             System.out.println("Inicia la generación de CCSS...");
             scannerCCSS scan = new scannerCCSS(new BufferedReader( new StringReader(texto)));
-            //Symbol s = (Symbol)scan.next_token();
-            //PRUEBA DE ANALISIS LEXICA
-            /*while(s.sym != 0){
-                System.out.println("lexema: " + s.value + " token: " + s.sym + " columna: " + scan.yylength());
-                s = (Symbol)scan.next_token();
-            }*/
             parserCCSS parser = new parserCCSS(scan);
-            parser.parse();
-            //a.DibujarAST();
+            Nodo a = (Nodo)parser.parse().value;
+            a.DibujarAST(2);
             
             System.out.println("Finaliza la generación de CCSS...");
         } catch (Exception ex) {

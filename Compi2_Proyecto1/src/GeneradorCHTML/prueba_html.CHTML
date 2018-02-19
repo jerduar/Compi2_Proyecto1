@@ -1,0 +1,159 @@
+package GeneradorCHTML;
+import java_cup.runtime.*;
+import java.util.ArrayList;
+
+%%
+%{
+public String colector_cadena = "";
+public String comentario = "";  
+%}
+
+%public
+%class scannerCH
+%cupsym symCH
+%cup    
+%char
+%column
+%full
+%line
+%unicode
+
+digito = [0-9] //E.R. que reconoce el intervalo de dígitos del 0 al 9.
+numero = {digito}+("." {digito}+)?//E.R. que reconoce tanto decimales como enteros.
+
+Letra = [a-zA-Z] //E.R. que reconoce el intervalo de letras de la a hasta z minúsculas y mayúsculas.
+identificador = {Letra}+({Letra}|{numero}|"_")*//E.R. para reconocer identificadores
+inicio = "--"
+otro_simb = ["%"|"&"|"{"|"-"|"!"|"#"|"$"|"/"|"("|")"|"="|"?"|"¿"|"¡"|"°"|"¬"|"}"|"^"|"_"|"+"|"*"]  
+
+cadena_dos = "\""[^\"]*"\""
+
+
+
+
+%state COMENTARIO
+%state MULTI
+%state STRING_CENTRO
+%%
+
+<YYINITIAL>{
+ 
+
+    "//"                    {yybegin(COMENTARIO);}
+    "<//-"                  {yybegin(MULTI);}
+    {inicio}                {yybegin(STRING_CENTRO);}
+    
+  
+    "<"                     {return new Symbol(Simbolos.menor, yycolumn, yyline, yytext()); }
+    ">"                     {return new Symbol(Simbolos.mayor, yycolumn, yyline, yytext());}
+    "("                     {return new Symbol(Simbolos.pr_parA, yycolumn, yyline, yytext());}
+    ")"                     {return new Symbol(Simbolos.pr_parC, yycolumn, yyline, yytext());}
+    
+    
+    ","                     {return new Symbol(Simbolos.coma, yycolumn, yyline, yytext());}
+    ";"                     {return new Symbol(Simbolos.p_coma, yycolumn, yyline, yytext());}
+    "="                     {return new Symbol(Simbolos.igual, yycolumn, yyline, yytext());}
+
+
+    
+    "TITULO"                {return new Symbol(Simbolos.pr_titulo, yycolumn, yyline, yytext());}
+    "FIN-TITULO"            {return new Symbol(Simbolos.pr_fintitulo, yycolumn, yyline, yytext());}
+    "CHTML"                 {return new Symbol(Simbolos.pr_chtml, yycolumn, yyline, yytext());}
+    "FIN-CHTML"             {return new Symbol(Simbolos.pr_finchtml, yycolumn, yyline, yytext());}
+    "ENCABEZADO"            {return new Symbol(Simbolos.pr_encabezado, yycolumn, yyline, yytext());}
+    "FIN-ENCABEZADO"        {return new Symbol(Simbolos.pr_finencabezado, yycolumn, yyline, yytext());}
+    "CJS"                   {return new Symbol(Simbolos.pr_cjs, yycolumn, yyline, yytext());}
+    "FIN-CJS"               {return new Symbol(Simbolos.pr_fincjs, yycolumn, yyline, yytext());}
+    "CCSS"                  {return new Symbol(Simbolos.pr_ccss, yycolumn, yyline, yytext());}
+    "FIN-CCSS"              {return new Symbol(Simbolos.pr_finccss, yycolumn, yyline, yytext());}
+    "CUERPO"                {return new Symbol(Simbolos.pr_cuerpo, yycolumn, yyline, yytext());}
+    "FIN-CUERPO"            {return new Symbol(Simbolos.pr_fincuerpo, yycolumn, yyline, yytext());}
+    "PANEL"                 {return new Symbol(Simbolos.pr_panel, yycolumn, yyline, yytext());}
+    "FIN-PANEL"             {return new Symbol(Simbolos.pr_finpanel, yycolumn, yyline, yytext());}
+    "TEXTO"                 {return new Symbol(Simbolos.pr_texto, yycolumn, yyline, yytext());}
+    "FIN-TEXTO"             {return new Symbol(Simbolos.pr_fintexto, yycolumn, yyline, yytext());}
+
+    "CAJA_TEXTO"            {return new Symbol(Simbolos.pr_caja_texto, yycolumn, yyline, yytext());}
+    "FIN-CAJA_TEXTO"        {return new Symbol(Simbolos.pr_fincaja_texto, yycolumn, yyline, yytext());}
+    "IMAGEN"                {return new Symbol(Simbolos.pr_imagen, yycolumn, yyline, yytext());}
+    "FIN-IMAGEN"            {return new Symbol(Simbolos.pr_finimagen, yycolumn, yyline, yytext());}
+    "BOTON"                 {return new Symbol(Simbolos.pr_boton, yycolumn, yyline, yytext());}
+    "FIN-BOTON"             {return new Symbol(Simbolos.pr_finboton, yycolumn, yyline, yytext());}
+    "ENLACE"                {return new Symbol(Simbolos.pr_enlace, yycolumn, yyline, yytext());}
+    "FIN-ENLACE"            {return new Symbol(Simbolos.pr_finenlace, yycolumn, yyline, yytext());}
+    "TABLA"                 {return new Symbol(Simbolos.pr_tabla, yycolumn, yyline, yytext());}
+    "FIN-TABLA"             {return new Symbol(Simbolos.pr_fintabla, yycolumn, yyline, yytext());}
+    "FIL_T"                 {return new Symbol(Simbolos.pr_fil_t, yycolumn, yyline, yytext());}
+    "FIN-FIL_T"             {return new Symbol(Simbolos.pr_finfil_t, yycolumn, yyline, yytext());}
+    "CB"                    {return new Symbol(Simbolos.pr_cb, yycolumn, yyline, yytext());}
+    "FIN-CB"                {return new Symbol(Simbolos.pr_fincb, yycolumn, yyline, yytext());}
+    "CT"                    {return new Symbol(Simbolos.pr_ct, yycolumn, yyline, yytext());}
+    "FIN-CT"                {return new Symbol(Simbolos.pr_finct, yycolumn, yyline, yytext());}
+    "TEXTO_A"               {return new Symbol(Simbolos.pr_texto_a, yycolumn, yyline, yytext());}
+    "FIN-TEXTO_A"           {return new Symbol(Simbolos.pr_fintexto_a, yycolumn, yyline, yytext());}
+    "CAJA"                  {return new Symbol(Simbolos.pr_caja, yycolumn, yyline, yytext());}
+    "FIN-CAJA"              {return new Symbol(Simbolos.pr_fincaja, yycolumn, yyline, yytext());}
+    "OPCION"                {return new Symbol(Simbolos.pr_opcion, yycolumn, yyline, yytext());}
+    "FIN-OPCION"            {return new Symbol(Simbolos.pr_finopcion, yycolumn, yyline, yytext());}
+    "SPINNER"               {return new Symbol(Simbolos.pr_spinner, yycolumn, yyline, yytext());}
+    "FIN-SPINNER"           {return new Symbol(Simbolos.pr_finspinner, yycolumn, yyline, yytext());}
+    "SALTO-FIN"             {return new Symbol(Simbolos.pr_salto, yycolumn, yyline, yytext());}
+    "click"                 {return new Symbol(Simbolos.pr_click, yycolumn, yyline, yytext());}
+    "ruta"                  {return new Symbol(Simbolos.pr_ruta, yycolumn, yyline, yytext());}
+
+    "id"                    {return new Symbol(Simbolos.pr_id, yycolumn, yyline, yytext());}
+    "grupo"                 {return new Symbol(Simbolos.pr_grupo, yycolumn, yyline, yytext());}
+    "alto"                  {return new Symbol(Simbolos.pr_alto, yycolumn, yyline, yytext());}
+    "ancho"                 {return new Symbol(Simbolos.pr_ancho, yycolumn, yyline, yytext());}
+    "alineado"              {return new Symbol(Simbolos.pr_alineado, yycolumn, yyline, yytext());}
+    "ccss"                  {return new Symbol(Simbolos.pr_atri_ccss, yycolumn, yyline, yytext());}
+    "valor"                 {return new Symbol(Simbolos.pr_valor, yycolumn, yyline, yytext());}
+    
+    {numero}                {return new Symbol(Simbolos.numero, yycolumn, yyline, yytext());}
+    {identificador}         {return new Symbol(Simbolos.identificador, yycolumn, yyline, yytext());}
+    {cadena_dos}            {return new Symbol(Simbolos.cadena, yycolumn, yyline, yytext());}
+    {otro_simb}             {return new Symbol(Simbolos.otro_simb, yycolumn, yyline, yytext());}
+    
+}
+
+
+<MULTI>
+{
+    "-//>"                  {System.out.println("Comentario multi: "+comentario);
+                            comentario ="";
+                            yybegin(YYINITIAL);
+                            }
+    .                       { comentario+= yytext();}
+    [ \t\r\n\f]             {/*Se ignoran*/}
+}
+
+
+<COMENTARIO>
+{
+    [^"\n"]                 {comentario += yytext();}
+    "\n"                    {
+                            System.out.println("Comentario simple: "+comentario);
+                            comentario = "";
+                            yybegin(YYINITIAL);
+                            }
+}
+
+<STRING_CENTRO>{
+    [^"-/"]                 {colector_cadena += yytext();}
+    "-/"                    {
+                            String cadena_temporal = colector_cadena; 
+                            colector_cadena = ""; 
+                            yybegin(YYINITIAL); 
+                            System.out.println("Comentario dentro etiquetas: "+cadena_temporal);
+                            return new Symbol(Simbolos.cadena2, yycolumn, yyline, cadena_temporal);
+           
+     }
+
+}
+
+[ \t\r\n\f]                 {/*Se ignoran*/}
+
+        .                   {System.out.println("simbolo: <<"+yytext()+">> ["+yyline+" , "+yycolumn+"]");
+                            return new Symbol(Simbolos.ptodo, yycolumn, yyline, yytext());
+                             //Listado_Errores.add(new Nodo_Error(yytext(),yycolumn,yyline,"Error Lexico","El caracter no pertenece al lenguaje"));   
+                            }

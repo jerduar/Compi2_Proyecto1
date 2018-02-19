@@ -1,0 +1,632 @@
+
+package GeneradorCHTML;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import java.lang.Math;
+//-------------------> Codigo para el parser, variables, metodos
+parser code
+{:  
+    
+    /* Metodo para errores sintacticos*/
+	
+    public void sintax_error(Symbol s){
+        System.out.println("Error en la linea: " + (s.right+1) + " Columna " + s.left + ". Token #" + s.value + " no reconocido.");
+    }
+
+    /* Método errores fatales */
+
+    public void errores_fatales(Symbol s) throws Exception{
+        JOptionPane.showMessageDialog(null, "Error Sintactico en la linea: " + (s.right+1) + " Columna " + s.left + ". Token #" + s.value + " no reconocido.");
+    }   
+  
+    
+:}
+
+
+//-------------------> Codigo para las acciones gramaticales
+action code
+{:
+
+
+
+
+:}  
+
+terminal p_coma, menor, mayor, igual,coma;
+terminal pr_chtml, pr_encabezado, pr_cjs, pr_ccss, pr_titulo, pr_cuerpo, pr_panel, pr_texto;
+terminal pr_caja_texto, pr_imagen, pr_boton, pr_enlace, pr_tabla, pr_fil_t, pr_cb, pr_ct, pr_valor;
+terminal pr_texto_a, pr_caja, pr_opcion, pr_spinner, pr_salto, pr_click, pr_ruta, pr_id;
+terminal pr_grupo, pr_alto, pr_ancho, pr_alineado, pr_atri_ccss, ptodo;
+terminal pr_finchtml, pr_finencabezado, pr_fincjs, pr_finccss, pr_fintitulo, pr_fincuerpo, pr_finpanel, pr_fintexto;
+terminal pr_fincaja_texto, pr_finimagen, pr_finboton, pr_finenlace, pr_fintabla, pr_finfil_t, pr_fincb, pr_finct;
+terminal pr_fintexto_a, pr_fincaja, pr_finopcion, pr_finspinner, pr_parC,pr_parA;
+terminal String numero, saltos, identificador, cadena,cadena2, otro_simb,simb;
+
+
+non terminal Nodo INICIO, H ,EN, CONT_EN, CONT_C, REP, CU, L_AT, L_AT2, L_ATRIBUTOS, L_ATRIBUTOS2;
+non terminal Nodo CU_FIL, CU_T, CONT_FIL,CUERPO,CONTENIDO,ENCABEZADO, NUEVO, CAJA_OP,CONT_COL;
+non terminal Nodo E ,L_PAR,CUERPO_TABLA;
+non terminal String L_ID,LISTA_ID;
+
+
+//-------------------> No Terminal inicial
+start with INICIO;
+
+INICIO ::= H:val{:
+        RESULT = val;
+        System.out.println(RESULT.getNombre() + "-----------");
+    :};
+
+H ::= menor pr_chtml mayor CONTENIDO:val menor pr_finchtml mayor {:
+        RESULT = new Nodo("H");
+        RESULT.getListaDehojas().add(val);
+        
+:};
+
+CONTENIDO ::= ENCABEZADO:val CUERPO:cuerpo{:
+         RESULT = new Nodo("CONTENIDO");
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(cuerpo);
+        
+        :};
+    
+
+ENCABEZADO ::= menor pr_encabezado mayor CONT_EN:val menor pr_finencabezado mayor{:
+            RESULT = new Nodo("ENCABEZADO");
+        RESULT.getListaDehojas().add(val);
+        
+        :};
+    
+CUERPO ::= menor pr_cuerpo mayor CONT_C:val menor pr_fincuerpo mayor {:
+        RESULT = new Nodo("CUERPO");
+        RESULT.getListaDehojas().add(val);
+        
+        :};
+
+CONT_EN ::= CONT_EN:val REP:nuevo{:
+        RESULT = val;
+        RESULT.getListaDehojas().add(nuevo);
+        
+        :}
+
+    | REP:val{:
+        RESULT = new Nodo("CONT_EN");
+        RESULT.getListaDehojas().add(val);
+        
+        :};
+
+REP ::= menor pr_titulo mayor L_ID:val menor pr_fintitulo mayor {:
+        RESULT = new Nodo("REP");
+        RESULT.getListaDehojas().add(new Nodo("TITULO"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+    
+    :}
+    | menor pr_ccss pr_ruta igual cadena p_coma mayor L_ID:val menor pr_finccss mayor {:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("CCSS"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+    :}
+    | menor pr_cjs pr_ruta igual cadena p_coma mayor L_ID:val menor pr_fincjs mayor {:
+        RESULT = new Nodo("REP");
+        RESULT.getListaDehojas().add(new Nodo("CJS"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+    :}
+    
+    | menor pr_ccss pr_ruta igual cadena p_coma mayor  menor pr_finccss mayor {:
+        RESULT = new Nodo("REP");
+        RESULT.getListaDehojas().add(new Nodo("PR_CCSS"));
+        
+        
+    :}
+    |menor pr_titulo mayor  menor pr_fintitulo mayor {:
+        RESULT = new Nodo("REP");
+        RESULT.getListaDehojas().add(new Nodo("TITULO"));
+        
+        
+    :}
+    | menor pr_cjs pr_ruta igual cadena p_coma mayor  menor pr_fincjs mayor {:
+        RESULT = new Nodo("REP");
+        RESULT.getListaDehojas().add(new Nodo("PR_CJS"));
+       
+        
+    :};
+
+    
+CONT_C ::= CONT_C:val CU:valor{:
+        RESULT = val;
+        RESULT.getListaDehojas().add(valor);
+        
+        :}
+    | CU:val{:
+        RESULT = new Nodo("CONT_C");
+        RESULT.getListaDehojas().add(val);
+        
+        :};
+
+CU ::= menor pr_panel L_AT:val p_coma mayor CU:valor menor pr_finpanel mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("PANEL"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(valor);
+        
+    :}
+    |menor pr_panel mayor CU:val menor pr_finpanel mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("PANEL"));
+        RESULT.getListaDehojas().add(val);
+        
+    :}
+    |menor pr_panel L_AT:val p_coma mayor  menor pr_finpanel mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("PANEL"));
+        RESULT.getListaDehojas().add(val);
+        
+    :}  
+    |menor pr_panel mayor  menor pr_finpanel mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("PANEL"));
+        
+    :}
+
+    |menor pr_texto L_AT:val p_coma mayor L_ID:id menor pr_fintexto mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TEXTO"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+    :}
+    |menor pr_texto mayor menor pr_fintexto mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TEXTO"));
+        
+        
+    :}
+
+    |menor pr_caja_texto L_AT:val p_coma mayor L_ID:id menor pr_fincaja_texto mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("CAJA_TEXTO"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+    :}
+    |menor pr_caja_texto mayor L_ID:val menor pr_fincaja_texto mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("CAJA_TEXTO"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+    :}
+
+    |menor pr_imagen L_AT2:val p_coma mayor L_ID:id menor pr_finimagen mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("IMAGEN"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+    :}
+    |menor pr_imagen mayor L_ID:val menor pr_finimagen mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("BOTON"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+    :}
+
+    |menor pr_boton L_AT2:val  p_coma mayor L_ID:id menor pr_finboton mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("BOTON"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+    :}
+    |menor pr_boton mayor L_ID:val menor pr_finboton mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("BOTON"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+        
+
+    :}
+
+    |menor pr_enlace pr_ruta igual cadena:cad p_coma mayor L_ID:val menor pr_finenlace mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("ENLACE" + cad.substring(1, cad.length()-1)));
+        RESULT.getListaDehojas().add(new Nodo(val));
+       
+    :}
+    |menor pr_enlace pr_ruta igual cadena:val p_coma mayor menor pr_finenlace mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("ENLACE "));
+        
+
+    :}
+
+    |menor pr_tabla L_AT:val p_coma mayor CU_T:cont menor pr_fintabla mayor{:
+                RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TABLA"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(cont);
+
+    :}
+    |menor pr_tabla mayor CU_T:val menor pr_fintabla mayor{:
+                RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TABLA"));
+        RESULT.getListaDehojas().add(val);
+
+    :}
+
+    |menor pr_texto_a L_AT:val p_coma mayor L_ID:cont menor pr_fintexto_a mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TEXTO_A"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(new Nodo(cont));
+
+    :}
+    |menor pr_texto_a mayor L_ID:val menor pr_fintexto_a mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("TEXTO_A"));
+        RESULT.getListaDehojas().add(new Nodo(val));
+
+    :}
+
+    |menor pr_caja L_AT2:val p_coma mayor CAJA_OP:cont menor pr_fincaja mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("Caja"));
+        RESULT.getListaDehojas().add(val);
+        RESULT.getListaDehojas().add(cont);
+
+    :}
+    |menor pr_caja mayor CAJA_OP:val menor pr_fincaja mayor{:
+        RESULT = new Nodo("CU");
+        RESULT.getListaDehojas().add(new Nodo("Caja"));
+        RESULT.getListaDehojas().add(val);
+
+         
+    :}
+
+    |menor pr_spinner L_AT:val p_coma mayor numero menor pr_finspinner mayor{:
+         RESULT = new Nodo("CU");
+         RESULT.getListaDehojas().add(val);
+         RESULT.getListaDehojas().add(new Nodo("salto"));
+         
+    :}
+    |menor pr_spinner mayor numero:n menor pr_finspinner mayor{:
+         RESULT = new Nodo("CU");
+         RESULT.getListaDehojas().add(new Nodo("Spinner " + n));
+         
+    :}
+
+    |menor pr_salto mayor {:
+         RESULT = new Nodo("CU");
+         RESULT.getListaDehojas().add(new Nodo("salto"));
+         
+
+        :};
+
+CAJA_OP ::= CAJA_OP:val NUEVO:otro{:
+            RESULT = val;
+            RESULT.getListaDehojas().add(otro);
+        :}
+        
+        |NUEVO:val {:
+            RESULT = val;
+        :};
+
+NUEVO ::= menor pr_opcion pr_valor igual E:val p_coma mayor  menor pr_finopcion mayor{:
+            RESULT = new Nodo("NUEVO");
+            RESULT.getListaDehojas().add(new Nodo("opcion"));
+            RESULT.getListaDehojas().add(val);
+            
+        :}
+          |menor pr_opcion pr_valor igual E:val p_coma mayor  L_ID:id menor pr_finopcion mayor{:
+            RESULT = new Nodo("NUEVO");
+            RESULT.getListaDehojas().add(new Nodo("opcion"));
+            RESULT.getListaDehojas().add(val);
+            RESULT.getListaDehojas().add(new Nodo(id));
+
+        
+        :};
+    
+
+L_AT ::= L_AT:val p_coma L_ATRIBUTOS:hijo{:
+        RESULT = val;
+        RESULT.getListaDehojas().add(new Nodo(";"));
+        RESULT.getListaDehojas().add(hijo);
+        
+        :}
+        |L_ATRIBUTOS:val {:
+            RESULT = new Nodo("L_AT");
+            RESULT.getListaDehojas().add(val);
+        
+        :};
+
+L_AT2 ::= L_AT2:val p_coma L_ATRIBUTOS2:hijo{:
+            RESULT = val;
+            RESULT.getListaDehojas().add(new Nodo(";"));
+            RESULT.getListaDehojas().add(hijo);
+        :}
+        |L_ATRIBUTOS2:val {:
+            RESULT = new Nodo("L_AT2");
+            RESULT.getListaDehojas().add(val);
+        :};
+
+L_ATRIBUTOS ::= pr_click igual E:val pr_parA pr_parC{:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("Click"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            RESULT.getListaDehojas().add(new Nodo("("));
+            RESULT.getListaDehojas().add(new Nodo(")"));
+
+            
+
+            :}
+
+            | pr_click igual E:val pr_parA L_PAR:val2 pr_parC{:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("Igual"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            RESULT.getListaDehojas().add(new Nodo("("));
+            RESULT.getListaDehojas().add(val2);
+            RESULT.getListaDehojas().add(new Nodo(")"));
+
+
+            :}
+
+
+            | pr_id:id igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("ID"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_grupo:grupo igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("grupo"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+
+            | pr_alto igual E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("alto"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_ancho:ancho igual:asig E:val {:
+            
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("Ancho"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_alineado:ali igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS");
+            RESULT.getListaDehojas().add(new Nodo("Alineado"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            :};
+            
+
+L_ATRIBUTOS2 ::= pr_click igual E:val pr_parA pr_parC{:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("Click"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            RESULT.getListaDehojas().add(new Nodo("("));
+            RESULT.getListaDehojas().add(new Nodo(")"));
+
+            
+
+            :}
+
+            | pr_click igual E:val pr_parA L_PAR:val2 pr_parC{:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("Igual"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            RESULT.getListaDehojas().add(new Nodo("("));
+            RESULT.getListaDehojas().add(val2);
+            RESULT.getListaDehojas().add(new Nodo(")"));
+
+
+            :}
+
+            | pr_ruta:ruta igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("Ruta"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+
+            :}
+            
+
+
+            | pr_id:id igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("ID"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_grupo:grupo igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("grupo"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+
+            | pr_alto igual E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("alto"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_ancho:ancho igual:asig E:val {:
+            
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("Ancho"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            
+            :}
+
+            | pr_alineado:ali igual:asig E:val {:
+            RESULT = new Nodo("L_ATRIBUTOS2");
+            RESULT.getListaDehojas().add(new Nodo("Alineado"));
+            RESULT.getListaDehojas().add(new Nodo("="));
+            RESULT.getListaDehojas().add(val);
+            :};
+            
+CU_T ::= CU_T:val CUERPO_TABLA:cuerpo{:
+        RESULT = val;
+        RESULT.getListaDehojas().add(cuerpo);
+        :}
+        
+
+        | CUERPO_TABLA:val{:
+        
+        RESULT = new Nodo("CU_T");
+        RESULT.getListaDehojas().add(val);
+        :};
+
+CUERPO_TABLA ::= menor pr_fil_t L_AT:atr mayor CU_FIL:val menor pr_finfil_t mayor {:
+            RESULT = new Nodo("CUERPO_TABLA");
+            RESULT.getListaDehojas().add(atr);
+            RESULT.getListaDehojas().add(val);
+
+        :}
+
+
+        |menor pr_fil_t mayor CU_FIL:val menor pr_finfil_t mayor {:
+            RESULT = new Nodo("CUERPO_TABLA");
+            RESULT.getListaDehojas().add(val);
+        :};
+
+CU_FIL ::= CU_FIL:val CONT_FIL:id{:
+            RESULT = val;
+            RESULT.getListaDehojas().add(id);
+        :}
+        
+        |CONT_FIL{:
+        RESULT = new Nodo("CU_FIL");
+        :};
+
+CONT_FIL ::= menor pr_cb mayor CONT_COL:cont  menor pr_fincb mayor{:
+            RESULT = new Nodo("CONT_FIL");
+            RESULT.getListaDehojas().add(new Nodo("CB"));
+            RESULT.getListaDehojas().add(cont);
+            :}
+
+            |menor pr_ct mayor CONT_COL:cont menor pr_finct mayor{:
+            RESULT = new Nodo("CONT_FIL");
+            RESULT.getListaDehojas().add(new Nodo("CT"));
+            RESULT.getListaDehojas().add(cont);
+            :};
+
+CONT_COL ::= L_ID:id {:
+        RESULT = new Nodo("CONTENIDO_COLUMNA");
+        RESULT.getListaDehojas().add(new Nodo(id));
+
+    :}
+
+    |menor pr_imagen L_AT2:lista p_coma mayor L_ID:id menor pr_finimagen mayor{:
+        RESULT = new Nodo("CONTENIDO_COLUMNA");
+        RESULT.getListaDehojas().add(new Nodo("IMAGEN"));
+        RESULT.getListaDehojas().add(lista);
+        RESULT.getListaDehojas().add(new Nodo(id));
+
+    :}
+    |menor pr_imagen mayor L_ID:id menor pr_finimagen mayor{:
+        RESULT = new Nodo("CONTENIDO_COLUMNA");
+        RESULT.getListaDehojas().add(new Nodo("IMAGEN"));
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+
+    :}
+
+    |menor pr_boton L_AT2:lista  p_coma mayor L_ID:id menor pr_finboton mayor{:
+        RESULT = new Nodo("CONTENIDO_COLUMNA");
+        RESULT.getListaDehojas().add(new Nodo("BOTON"));
+        RESULT.getListaDehojas().add(lista);
+        RESULT.getListaDehojas().add(new Nodo(id));
+
+
+    :}
+    |menor pr_boton mayor L_ID:id menor pr_finboton mayor{:
+        RESULT = new Nodo("CONTENIDO_COLUMNA");
+        RESULT.getListaDehojas().add(new Nodo("BOTON"));
+        RESULT.getListaDehojas().add(new Nodo(id));
+        
+    :};
+
+L_ID ::= L_ID:val LISTA_ID:id{:
+    
+        RESULT = val + " " + id;
+        
+    :}
+
+    |LISTA_ID:val{:
+        RESULT = val; 
+    :};
+
+LISTA_ID ::= numero:num{:
+        RESULT = num;
+        :}
+
+    | otro_simb:si {:
+        RESULT = si;
+       
+    :}
+
+    | identificador:id{:
+        RESULT = id;
+    :};
+   
+        
+E ::= cadena:cad 
+    {: 
+    RESULT = new Nodo("E");
+    
+    RESULT.getListaDehojas().add(new Nodo(cad.substring(1, cad.length()-1)));
+    :}
+    | numero:num{:
+    RESULT = new Nodo("E");
+    RESULT.getListaDehojas().add(new Nodo(num));
+    :}
+    | identificador:id {:
+    RESULT = new Nodo("E");
+    RESULT.getListaDehojas().add(new Nodo(id));
+    
+    :};
+
+L_PAR ::= L_PAR:val coma identificador:id{:
+    RESULT = val;
+    RESULT.getListaDehojas().add(new Nodo(id));
+    
+    :}
+
+    | identificador:id{:
+    RESULT = new Nodo("L_PARAMETROS");
+    RESULT.getListaDehojas().add(new Nodo(id));
+    :};

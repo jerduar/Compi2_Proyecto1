@@ -28,263 +28,254 @@ action code
 :}
 
 terminal String ID, NUM, TRUE, FALSE, CADENA;
-terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, t_alineado, t_texto;
-terminal String t_formato, t_letra, t_tamTex, t_fondoElemento, t_autoredimension, t_visible, t_borde, t_opaque, t_colorText, t_id;
-terminal String t_grupo, t_negrilla, t_cursiva, t_mayuscula, t_minuscula, t_capital, t_tamelemento; 
-non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB;
+terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, alineado, texto;
+terminal String formato, letra, tamTex, fondoElemento, autoredimension, visible, borde, opaque, colorText, id_token,horizontal,vertical;
+terminal String grupo, negrilla, cursiva, mayuscula, minuscula, capital, tamelemento; 
+non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB,AREA;
 
 precedence left MAS, MENOS;
 precedence left POR, DIV; 
 
 start with INICIO;
 
-INICIO            ::= L_DEF:lista
-                        {:
-                            
-                        :}
+INICIO          ::= L_DEF:l
+                {:
+                    RESULT = new Nodo(ConsCSS.INICIO);
+                    RESULT.addHijo(l);
+                :}
 ;
 
-L_DEF    ::= L_DEF:lista DEF:def
-                        {:
-                            
-                        :}
-                |   DEF:def
-                        {:
-                            //RESULT = def;
-                        :}
+L_DEF           ::= L_DEF:l DEF:def
+                {:
+                    RESULT = l;
+                    RESULT.addHijo(def);
+                :}
+                | DEF:def
+                {:
+                    RESULT = new Nodo(ConsCSS.L_DEF);
+                    RESULT.addHijo(def);
+                :}
 ;
 
-DEF      ::= ID:id COR_IZQ L_ATRIB:lista COR_DER
-                        {:
-                            /*Nodo padre = new Nodo("DEF");
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(lista);
-                            RESULT = padre;*/
-                        :}
-                |   ID:id COR_IZQ COR_DER
-                        {:
-                            /*Nodo padre = new Nodo("DEF");
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
-                            RESULT = padre;*/
-                        :}
+DEF             ::= ID:id COR_IZQ L_ATRIB:l COR_DER
+                {:
+                    RESULT = new Nodo(ConsCSS.DEF);
+                    RESULT.addHijo(ConsCSS.ID,id);
+                    RESULT.addHijo(l);
+                :}
+                | ID:id COR_IZQ COR_DER
+                {:
+                    RESULT = new Nodo(ConsCSS.DEF);
+                    RESULT.addHijo(ConsCSS.ID,id);
+                :}
 ;
 
-L_ATRIB             ::= L_ATRIB:lista ATRIB:x
-                        {:
-                            /*Nodo padre = new Nodo("L_ATRIB");
-                            padre.getListaDeHijos().add(lista);
-                            padre.getListaDeHijos().add(x);
-                            RESULT = padre;*/
-                        :}
-                |   ATRIB:x
-                        {:
-                            //RESULT = x;
-                        :}
+L_ATRIB         ::= L_ATRIB:l_atrib ATRIB:a
+                {:
+                    RESULT = l_atrib;
+                    RESULT.addHijo(a);
+                :}
+                | ATRIB:a
+                {:
+                    RESULT = new Nodo(ConsCSS.L_ATRIB);
+                    RESULT.addHijo(a);
+                :}
 ;
 
-ATRIB               ::= t_grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:lista
-                        {:
-                            /*Nodo padre = new Nodo("ATRIB");
-                            padre.getListaDeHijos().add(new Nodo("GRUPO"));
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(lista);
-                            RESULT = padre;*/
-                        :}
-                |   t_id PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:lista
-                        {:
-                            /*Nodo padre = new Nodo("X");
-                            padre.getListaDeHijos().add(new Nodo("ID"));
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(lista);
-                            RESULT = padre;*/
-                        :}
-                |   t_grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("ATRIB");
-                            padre.getListaDeHijos().add(new Nodo("GRUPO"));
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
-                            RESULT = padre;*/
-                        :}
-                |   t_id PAR_IZQ ID:id PAR_DER PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("ATRIB");
-                            padre.getListaDeHijos().add(new Nodo("ID"));
-                            padre.getListaDeHijos().add(new Nodo(id));
-                            padre.getListaDeHijos().add(new Nodo("Sin Instrucciones"));
-                            RESULT = padre;*/
-                        :}
+ATRIB           ::= grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:l
+                {:
+                    RESULT = new Nodo(ConsCSS.ATRIB_G);
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(l);
+                :}
+                | id_token PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:l
+                {:
+                    RESULT = new Nodo(ConsCSS.ATRIB_ID);
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(l);
+                :}
+                | grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.ATRIB_G);
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                :}
+                | id_token PAR_IZQ ID:id PAR_DER PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.ATRIB_ID);
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                :}
 ;
 
-L_SEN    ::= L_SEN:lista SEN:sent
-                        {:
-                            /*Nodo padre = new Nodo("L_SEN");
-                            padre.getListaDeHijos().add(lista);
-                            padre.getListaDeHijos().add(sent);
-                            RESULT = padre;*/
-                        :}
-                |   SEN:sent
-                        {:
-                            //RESULT = sent;
-                        :}
+L_SEN       ::= L_SEN:l_sen SEN:s
+                {:
+                    RESULT = l_sen;
+                    RESULT.addHijo(s);
+                :}
+                | SEN:s
+                {:
+                    RESULT = new Nodo(ConsCSS.L_SEN);
+                    RESULT.addHijo(s);
+                :}
 ;
 
-SEN       ::= t_alineado IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("ALINEADO");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_texto IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("TEXTO");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_formato IGUAL L_FORM:lista PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("FORM");
-                            padre.getListaDeHijos().add(lista);
-                            RESULT = padre;*/
-                        :}
-                |   t_letra IGUAL E:exp PUNTO_COMA
-                        {:
-                           /* Nodo padre = new Nodo("LETRA");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_tamTex IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("TAM_TEX");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_fondoElemento IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("FONDO_ELEMENTO");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_autoredimension IGUAL COR_IZQ E:exp1 COMA E:exp2 COR_DER PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("AUTOREDIMENSION");
-                            padre.getListaDeHijos().add(exp1);
-                            padre.getListaDeHijos().add(exp2);
-                            RESULT = padre;*/
-                        :}
-                |   t_visible IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("VISIBLE");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_borde IGUAL COR_IZQ E:exp1 COMA E:exp2 COMA E:exp3 COR_DER PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("BORDE");
-                            padre.getListaDeHijos().add(exp1);
-                            padre.getListaDeHijos().add(exp2);
-                            padre.getListaDeHijos().add(exp3);
-                            RESULT = padre;*/
-                        :}
-                |   t_opaque IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("OPAQUE");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   t_colorText IGUAL E:exp PUNTO_COMA
-                        {:
-                            /*Nodo padre = new Nodo("COLOR_TEXT");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
+SEN         ::= alineado IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.ALINEADO);
+                    RESULT.addHijo(e);
+                :}
+                | texto IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.TEXTO);
+                    RESULT.addHijo(e);
+                :}
+                | formato IGUAL L_FORM:l_form PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.FORMATO);
+                    RESULT.addHijo(l_form);
+                :}
+                | letra IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.LETRA);
+                    RESULT.addHijo(e);
+                :}
+                | tamTex IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.TAMTEX);
+                    RESULT.addHijo(e);
+                :}
+                | fondoElemento IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.FONDOELE);
+                    RESULT.addHijo(e);
+                :}
+                | autoredimension IGUAL COR_IZQ E:e1 COMA AREA:a COR_DER PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.AUTOREDIM);
+                    RESULT.addHijo(e1,a);
+                :}
+                | visible IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.VISIBLE);
+                    RESULT.addHijo(e);
+                :}
+                | borde IGUAL COR_IZQ E:e1 COMA E:e2 COMA E:e3 COR_DER PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.BORDE);
+                    RESULT.addHijo(e1,e2,e3);
+                :}
+                | opaque IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.OPAQUE);
+                    RESULT.addHijo(e);
+                :}
+                | colorText IGUAL E:e PUNTO_COMA
+                {:
+                    RESULT = new Nodo(ConsCSS.COLOR_TEXT);
+                    RESULT.addHijo(e);
+                :}
 ;
 
-L_FORM       ::= L_FORM:lista COMA FORM:formato
-                        {:
-                            /*Nodo padre = new Nodo("L_FORM");
-                            padre.getListaDeHijos().add(lista);
-                            padre.getListaDeHijos().add(formato);
-                            RESULT = padre;*/
-                        :}
+AREA            ::= horizontal{:
+                    RESULT = new Nodo(ConsCSS.HORI);
+                :}
+                | vertical
+                {:
+                    RESULT = new Nodo(ConsCSS.VERTI);
+                :}
+;
+
+L_FORM      ::= L_FORM:l_form COMA FORM:formato
+                {:
+                    RESULT = l_form;
+                    RESULT.addHijo(formato);
+                :}
                 |   FORM:formato
-                        {:
-                            //RESULT = formato;
-                        :}
+                {:
+                    RESULT = new Nodo(ConsCSS.L_FORM);
+                    RESULT.addHijo(formato);
+                :}
 ;
 
-FORM         ::= t_mayuscula:formato
-                        {:
-                            //RESULT = new Nodo(formato);
-                        :}
-                |   t_minuscula:formato
-                        {:
-                            //RESULT = new Nodo(formato);
-                        :}
-                |   t_cursiva:formato
-                        {:
-                            //RESULT = new Nodo(formato);
-                        :}
-                |   t_negrilla:formato
-                        {:
-                            //RESULT = new Nodo(formato);
-                        :}
-                |   t_capital:formato
-                        {:
-                            //RESULT = new Nodo(formato);
-                        :}
+FORM         ::= mayuscula:formato
+                {:
+                    RESULT = new Nodo(ConsCSS.MAYUSCULA);
+                :}
+                |   minuscula:formato
+                {:
+                    RESULT = new Nodo(ConsCSS.MINUSCULA);
+                :}
+                | cursiva:formato
+                {:
+                    RESULT = new Nodo(ConsCSS.CURSIVA);
+                :}
+                | negrilla:formato
+                {:
+                    RESULT = new Nodo(ConsCSS.NEGRILLA);
+                :}
+                | capital:formato
+                {:
+                    RESULT = new Nodo(ConsCSS.CAPITAL);
+                :}
 ;
 
-E             ::= E:izq MAS:signo E:der
-                        {: 
-                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
-                            Nodo padre = new Nodo(signo);
-                            padre.getListaDeHijos().add(izq);
-                            padre.getListaDeHijos().add(der);
-                            RESULT = padre;*/
-                        :}
-                |   E:izq MENOS:signo E:der
-                        {: 
-                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
-                            Nodo padre = new Nodo(signo);
-                            padre.getListaDeHijos().add(izq);
-                            padre.getListaDeHijos().add(der);
-                            RESULT = padre;*/
-                        :}
-                |   E:izq POR:signo E:der
-                        {: 
-                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
-                            Nodo padre = new Nodo(signo);
-                            padre.getListaDeHijos().add(izq);
-                            padre.getListaDeHijos().add(der);
-                            RESULT = padre;*/
-                        :}
-                |   E:izq DIV:signo E:der
-                        {: 
-                            /*System.out.println(izq.getTexto()+signo+der.getTexto());
-                            Nodo padre = new Nodo(signo);
-                            padre.getListaDeHijos().add(izq);
-                            padre.getListaDeHijos().add(der);
-                            RESULT = padre;*/
-                        :}
-                |   MENOS:signo E:exp 
-                        {: 
-                            /*System.out.println("-"+exp.getTexto());
-                            Nodo padre = new Nodo("NEGATIVO");
-                            padre.getListaDeHijos().add(exp);
-                            RESULT = padre;*/
-                        :}
-                |   PAR_IZQ E:exp PAR_DER   
-                        {: /*RESULT = exp;*/ :}
-                |   ID:id           
-                        {: /*RESULT = new Nodo(id);*/ :}
-                |   NUM:num   
-                        {: /*RESULT = new Nodo(num);*/ :}
-                |   TRUE:tt  
-                        {: /*RESULT = new Nodo(tt);*/ :}
-                |   FALSE:tf   
-                        {: /*RESULT = new Nodo(tf);*/ :}
+E           ::= E:e1 MAS:signo E:e2
+                {:
+                    RESULT = new Nodo(ConsCSS.E);
+                    Nodo n = new Nodo(ConsCSS.MAS);
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                | E:e1 MENOS E:e2
+                {:
+                    RESULT = new Nodo(ConsCSS.E);
+                    Nodo n = new Nodo(ConsCSS.MENOS);
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                |   E:e1 POR E:e2
+                {:
+                    RESULT = new Nodo(ConsCSS.E);
+                    Nodo n = new Nodo(ConsCSS.POR);
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                |   E:e1 DIV E:e2
+                {: 
+                    RESULT = new Nodo(ConsCSS.E);
+                    Nodo n = new Nodo(ConsCSS.DIV);
+                    n.addHijo(e1,e2);
+                    RESULT.addHijo(n);
+                :}
+                | MENOS E:e 
+                {:
+                    RESULT = new Nodo(ConsCSS.E);
+                    Nodo n = new Nodo(ConsCSS.MENOS);
+                    RESULT.addHijo(n,e);
+                :}
+                | PAR_IZQ E:e PAR_DER   
+                {:  
+                    RESULT = e;
+                :}
+                | ID:id           
+                {:  
+                    RESULT = new Nodo(ConsCSS.E);
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                :}
+                | NUM:num   
+                {:  
+                    RESULT = new Nodo(ConsCSS.E);
+                    RESULT.addHijo(new Nodo(ConsCSS.NUM,num));
+                :}
+                | TRUE:tt  
+                {: 
+                    RESULT = new Nodo(ConsCSS.BOOL,tt); 
+                :}
+                | FALSE:tf
+                {: 
+                    RESULT = new Nodo(ConsCSS.BOOL,tf); 
+                :}
                 |   CADENA:cad   
-                        {: /*RESULT = new Nodo(cad.substring(1, cad.length()-1));*/ :}
+                {: 
+                    RESULT = new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)); 
+                :}
 ;

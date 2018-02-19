@@ -5,6 +5,7 @@
  */
 package AST;
 
+import GeneradorCCSS.ConsCSS;
 import GeneradorCJS.ConsCJS;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,19 +16,12 @@ import java.util.ArrayList;
  * @author jerduar
  */
 public class Nodo {
-
-    private String id;
+    
     private String lexema;
     private ArrayList<Nodo> hijos;
-    private static int contador;
+    private static Integer contador;
     private static String cadena_dot;
     private Integer cod;
-
-    public Nodo(String id, String lexema) {
-        this.id = id;
-        this.lexema = lexema;
-        this.hijos = new ArrayList<>();
-    }
     
     public Nodo(Integer cod, String valor){
         this.cod = cod;
@@ -39,20 +33,6 @@ public class Nodo {
         this.cod = cod;
         this.lexema = "";
         this.hijos = new ArrayList<>();
-    }
-
-    /**
-     * @return the id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**
@@ -88,20 +68,48 @@ public class Nodo {
         }
     }
 
-    public void DibujarAST() {
+    public void DibujarAST(int arbol) {
         cadena_dot = "";
         contador = 0;
-        Visitar(this);
-        CrearDot();
+        switch(arbol){
+            case 1:
+                VisitarCJS(this);
+                break;
+            case 2:
+                VisitarCSS(this);
+                break;
+            case 3:
+                //VisitarCHTML(this);
+                break;
+            default:
+                System.out.println("No se envio paramétro valido para el dibujo del arbol");
+                break;
+        }
+        CrearDot(arbol);
     }
 
-    private String Visitar(Nodo e) {
+    private String VisitarCJS(Nodo e) {
         String id_padre = "Nodo" + contador;
         contador++;
         cadena_dot += id_padre + "[label=\"" + ConsCJS.RetornStringCSJ(e.cod) + " " + e.lexema + "\"];\n";
         for (Nodo hijo : e.getHijos()) {
             if (hijo != null) {
-                String cad = id_padre + "->" + Visitar(hijo) + ";\n";
+                String cad = id_padre + "->" + VisitarCJS(hijo) + ";\n";
+                cadena_dot += cad;
+            }
+
+        }
+
+        return id_padre;
+    }
+    
+    private String VisitarCSS(Nodo e){
+        String id_padre = "Nodo" + contador;
+        contador++;
+        cadena_dot += id_padre + "[label=\"" + ConsCSS.RetornStringCSS(e.cod) + " " + e.lexema + "\"];\n";
+        for (Nodo hijo : e.getHijos()) {
+            if (hijo != null) {
+                String cad = id_padre + "->" + VisitarCSS(hijo) + ";\n";
                 cadena_dot += cad;
             }
 
@@ -110,13 +118,14 @@ public class Nodo {
         return id_padre;
     }
 
-    private void CrearDot() {
+    private void CrearDot(int i) {
         try {
-            File archivo_dot = new File("arbol.txt");
+            File archivo_dot = new File("arbol" + i + ".txt");
             FileWriter escribir = new FileWriter(archivo_dot, false);
             escribir.write("digraph Grafo{\n " + cadena_dot + "\n}\n");
             escribir.close();
-            CrearImg("C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\arbol.txt","C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\grafo.png");
+            CrearImg("C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\arbol" + i + ".txt",
+                    "C:\\Users\\jerdu\\Documents\\NetBeansProjects\\Compi2_Proyecto1\\Compi2_Proyecto1\\grafo" + i + ".png");
         } catch (Exception e) {
             System.err.println("Error al crear el DOT");
         } finally {
@@ -126,10 +135,6 @@ public class Nodo {
 
     private void CrearImg(String direccionDot, String direccionImg) {
         try {
-            /*ProcessBuilder img;
-            img = new ProcessBuilder("C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe", "-Tpng", "-o", direccionImg, direccionDot);
-            img.redirectErrorStream(true);
-            img.start();*/
             String[]  cmd = {"C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe","-Tpng",direccionDot,"-o",direccionImg};
             Runtime rt = Runtime.getRuntime();
             rt.exec(cmd);

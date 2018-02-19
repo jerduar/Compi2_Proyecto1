@@ -45,7 +45,7 @@ public class AnalizadorCJS {
             
             parserCJS parser = new parserCJS(scan);
             Nodo a = (Nodo)parser.parse().value;
-            a.DibujarAST();
+            a.DibujarAST(1);
             
             System.out.println("Finaliza la generación de CSJ...");
         } catch (Exception ex) {
