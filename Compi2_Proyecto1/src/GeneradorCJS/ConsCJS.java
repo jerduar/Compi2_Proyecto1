@@ -89,7 +89,7 @@ public class ConsCJS {
                                     "DOO","DO","CONTEO","ATEX","IDC","IDS","IDO","DEF","DETENER"};
     
     public static String RetornStringCSJ(Integer i){
-        return (i<0 || i>60) ? "" : ROL[i];
+        return (i<0 || i>59) ? "" : ROL[i];
     }
     
     
