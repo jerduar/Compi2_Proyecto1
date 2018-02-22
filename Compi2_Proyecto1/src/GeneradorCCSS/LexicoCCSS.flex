@@ -33,6 +33,8 @@ NUM = {digito}+("."{digito}+)?
 Letra = [a-zA-Z] 
 ID = ({Letra}|"_")+({Letra}|{NUM}|"_")*
 
+
+
 CADENA = "\""[^\"]*"\""
 
 LineTerminator = \r|\n|\r\n
@@ -46,20 +48,38 @@ DocumentationComment = "/**" {CommentContent} "*"+ "/"
 CommentContent = ( [^*] | \*+ [^/*] )*
 /* comments */
 Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
+
+MAS		= "+"
+MENOS		= "-"
+MULT       	= "*"
+DIV             = "/"
+
+PAR_IZQ         = "("
+PAR_DER         = ")"
+COR_IZQ         = "["
+COR_DER         = "]"
+
+PUNTO_COMA      = ";"
+COMA            = ","
+IGUAL           = ":="
+
 %%
-//Fin 
+//Fin
+
+
+ 
     
-<YYINITIAL>"["                      {return new Symbol(symCCSS.COR_IZQ, yycolumn, yyline, yytext()); }
-<YYINITIAL>"]"                      {return new Symbol(symCCSS.COR_DER, yycolumn, yyline, yytext());}
-<YYINITIAL>"("                      {return new Symbol(symCCSS.PAR_IZQ, yycolumn, yyline, yytext());}
-<YYINITIAL>":="                     {return new Symbol(symCCSS.IGUAL, yycolumn, yyline, yytext());}
-<YYINITIAL>","                      {return new Symbol(symCCSS.COMA, yycolumn, yyline, yytext());}
-<YYINITIAL>"+"                      {return new Symbol(symCCSS.MAS, yycolumn, yyline, yytext());}
-<YYINITIAL>"-"                      {return new Symbol(symCCSS.MENOS, yycolumn, yyline, yytext());}
-<YYINITIAL>"*"                      {return new Symbol(symCCSS.POR, yycolumn, yyline, yytext());}
-<YYINITIAL>")"                      {return new Symbol(symCCSS.PAR_DER, yycolumn, yyline, yytext());}
-<YYINITIAL>";"                      {return new Symbol(symCCSS.PUNTO_COMA, yycolumn, yyline, yytext());}
-<YYINITIAL>"/"                      {return new Symbol(symCCSS.DIV, yycolumn, yyline, yytext());}
+<YYINITIAL>{COR_IZQ}                {return new Symbol(symCCSS.COR_IZQ, yycolumn, yyline, yytext()); }
+<YYINITIAL>{COR_DER}                {return new Symbol(symCCSS.COR_DER, yycolumn, yyline, yytext());}
+<YYINITIAL>{PAR_IZQ}                {return new Symbol(symCCSS.PAR_IZQ, yycolumn, yyline, yytext());}
+<YYINITIAL>{IGUAL}                  {return new Symbol(symCCSS.IGUAL, yycolumn, yyline, yytext());}
+<YYINITIAL>{COMA}                   {return new Symbol(symCCSS.COMA, yycolumn, yyline, yytext());}
+<YYINITIAL>{MAS}                    {return new Symbol(symCCSS.MAS, yycolumn, yyline, yytext());}
+<YYINITIAL>{MENOS}                  {return new Symbol(symCCSS.MENOS, yycolumn, yyline, yytext());}
+<YYINITIAL>{MULT}                   {return new Symbol(symCCSS.POR, yycolumn, yyline, yytext());}
+<YYINITIAL>{PAR_DER}                {return new Symbol(symCCSS.PAR_DER, yycolumn, yyline, yytext());}
+<YYINITIAL>{PUNTO_COMA}             {return new Symbol(symCCSS.PUNTO_COMA, yycolumn, yyline, yytext());}
+<YYINITIAL>{DIV}                    {return new Symbol(symCCSS.DIV, yycolumn, yyline, yytext());}
 
 <YYINITIAL>"negrilla"               {return new Symbol(symCCSS.negrilla, yycolumn, yyline, yytext());}
 <YYINITIAL>"cursiva"                {return new Symbol(symCCSS.cursiva, yycolumn, yyline, yytext());}
@@ -83,6 +103,10 @@ Comment = {TraditionalComment} | {EndOfLineComment} | {DocumentationComment}
 <YYINITIAL>"grupo"                  {return new Symbol(symCCSS.grupo, yycolumn, yyline, yytext());}
 <YYINITIAL>"horizontal"             {return new Symbol(symCCSS.horizontal, yycolumn, yyline, yytext());}
 <YYINITIAL>"vertical"               {return new Symbol(symCCSS.vertical, yycolumn, yyline, yytext());}
+<YYINITIAL>"izquierda"              {return new Symbol(symCCSS.izquierda, yycolumn, yyline, yytext());}
+<YYINITIAL>"derecha"                {return new Symbol(symCCSS.derecha, yycolumn, yyline, yytext());}
+<YYINITIAL>"centrado"               {return new Symbol(symCCSS.centrado, yycolumn, yyline, yytext());}
+<YYINITIAL>"justificado"            {return new Symbol(symCCSS.justificado, yycolumn, yyline, yytext());}
 
     
 <YYINITIAL>{NUM}                    {return new Symbol(symCCSS.NUM, yycolumn, yyline, yytext());}

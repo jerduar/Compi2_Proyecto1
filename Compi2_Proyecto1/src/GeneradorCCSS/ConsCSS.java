@@ -65,15 +65,21 @@ public class ConsCSS {
     public static final Integer ALINEADO = 38;
     public static final Integer HORI = 39;
     public static final Integer VERTI = 40;
+    public static final Integer JUSTIFICADO = 41;
+    public static final Integer CENTRADO = 42;
+    public static final Integer IZQ = 43;
+    public static final Integer DER = 44;
+    public static final Integer L_CAD = 45;
     
    
     private static String[] ROL = {"INICIO","L_DEF","DEF","ATRIB_ID","L_SEN","SEN","L_FORM","E","FORM","L_ATRIB",
                                     "formato","letra","tamtex","fondoele","autoredim","visible","borde","opaque","colortext","id_token",
                                     "grupo","negrilla","cursiva","mayus","minus","capital","tamele",":=","+","-",
-                                    "*","/","NUM","ID","CAD","BOOL","TEXTO","ATRIB_G","ALINEADO","HORI","VERTI"};
+                                    "*","/","NUM","ID","CAD","BOOL","TEXTO","ATRIB_G","ALINEADO","HORI","VERTI",
+                                    "JUSTI","CENTR","IZQ","DER","L_CAD"};
     
     public static String RetornStringCSS(Integer i){
-        return (i<0 || i>40) ? "" : ROL[i];
+        return (i<0 || i>45) ? "" : ROL[i];
     }
 
 }

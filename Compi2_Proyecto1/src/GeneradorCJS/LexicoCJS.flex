@@ -24,9 +24,9 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace = {LineTerminator} | [ \t\f]
 
-TraditionalComment = "/*" [^*] ~"*/" | "/*" "*"+ "/"
+TraditionalComment = "'/" [^/] ~"/'" | "'/" "/"+ "'"
 // Comment can be the last line of the file, without line terminator.
-EndOfLineComment = "//" {InputCharacter}* {LineTerminator}
+EndOfLineComment = "'" {InputCharacter}* {LineTerminator}
 DocumentationComment = "/**" {CommentContent} "*"+ "/"
 CommentContent = ( [^*] | \*+ [^/*] )*
 /* comments */
@@ -63,8 +63,8 @@ DOS_PUNTOS      = ":"
 ID              = [_A-Za-z][_0-9A-Za-z]*
 NUMERICO        = [0-9]+("\."[0-9]+)?
 FECHA           = [0-3][0-9]"/"[0-1][0-9]"/"[0-9][0-9][0-9][0-9]
-DATE            = "'"{FECHA}"'"
-DATE_T          = "'"{FECHA}" "[0-9][0-9]":"[0-9][0-9]":"[0-9][0-9]"'"
+DATE            = "\""{FECHA}"\""
+DATE_T          = "\""{FECHA}" "[0-9][0-9]":"[0-9][0-9]":"[0-9][0-9]"\""
 CADENA          = "\""[^\"]*"\""
 
 SPACE   = [\ \r\t\f\t]
@@ -74,8 +74,8 @@ ENTER   = [\ \n]
 
 //PALABRAS RESERVADAS
 <YYINITIAL> "mientras"      { return new Symbol(symCJS.MIENTRAS, yyline, yycolumn, yytext()); }
-<YYINITIAL> "'True'"        { return new Symbol(symCJS.TRUE, yyline, yycolumn, yytext()); }
-<YYINITIAL> "'False'"       { return new Symbol(symCJS.FALSE, yyline, yycolumn, yytext()); }
+<YYINITIAL> "\"True\""      { return new Symbol(symCJS.TRUE, yyline, yycolumn, yytext().substring(1,yytext().length()-1)); }
+<YYINITIAL> "\"False\""     { return new Symbol(symCJS.FALSE, yyline, yycolumn, yytext().substring(1,yytext().length()-1)); }
 <YYINITIAL> "funcion"       { return new Symbol(symCJS.FUNCION, yyline, yycolumn, yytext()); }
 <YYINITIAL> "para"          { return new Symbol(symCJS.PARA, yyline, yycolumn, yytext()); }
 <YYINITIAL> "si"            { return new Symbol(symCJS.SI, yyline, yycolumn, yytext()); }
@@ -92,9 +92,8 @@ ENTER   = [\ \n]
 <YYINITIAL> "aTexto"        { return new Symbol(symCJS.ATEXTO, yyline, yycolumn, yytext()); }
 <YYINITIAL> "SetElemento"   { return new Symbol(symCJS.SETELEMENTO, yyline, yycolumn, yytext()); }
 <YYINITIAL> "Mensaje"       { return new Symbol(symCJS.MENSAJE, yyline, yycolumn, yytext()); }
-<YYINITIAL> "Mensaje"       { return new Symbol(symCJS.MENSAJE, yyline, yycolumn, yytext()); }
 <YYINITIAL> "Obtener"       { return new Symbol(symCJS.OBTENER, yyline, yycolumn, yytext()); }
-<YYINITIAL> "Conteo"       { return new Symbol(symCJS.CONTEO, yyline, yycolumn, yytext()); }
+<YYINITIAL> "Conteo"        { return new Symbol(symCJS.CONTEO, yyline, yycolumn, yytext()); }
 
 <YYINITIAL> {ID}            { return new Symbol(symCJS.ID, yyline, yycolumn, yytext()); }
 <YYINITIAL> {CADENA}        { return new Symbol(symCJS.CADENA, yyline, yycolumn, yytext()); }

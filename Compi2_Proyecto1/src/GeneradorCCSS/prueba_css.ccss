@@ -1,10 +1,11 @@
 Titular_ccss [
 
-GRUPO (grupo_areas_1);
+Grupo (grupo_areas_1);
 Formato := mayuscula, NEGRILLA, capital-t;
 Letra := "Courier New";
 Tamtex := 15.5;
 Fondoelemento := "green";
+alineado := justificado;
 
 
 GRUPO (grupo_areas_2);
@@ -12,10 +13,12 @@ Formato := mayuscula, NEGRILLA, capital-t;
 Letra := "Courier New";
 Tamtex := 13;
 Autoredimension := [12,Vertical];
+Texto := "camino" + " a " + " la " + " cima ";
 
 
 ID (identificador_1);
 Formato := mayuscula, NEGRILLA, capital-t;
 Letra := "Arial";
 Tamtex := 12;
+borde := [23,"green",true];
 ]

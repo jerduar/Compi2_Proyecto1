@@ -80,16 +80,24 @@ public class ConsCJS {
     public static final Integer ID_OBS = 57;
     public static final Integer DEF = 58;
     public static final Integer DET = 59;
+    public static final Integer ID_ID = 59;
+    public static final Integer FUN_ID = 60;
+    public static final Integer FUN_ID2 = 61;
+    public static final Integer FUN_SET = 62;
+    public static final Integer FUN_OBS = 63;
+    public static final Integer FUN_OBS2 = 64;
+    public static final Integer FUN_SET2 = 65;
     
     private static String[] ROL = {"INICIO","L1","DEC","FUN","IF","LLAM","ASIG","L_SEN","SEN","SWITCH",
                                     "FOR","LID","MSG","SOUT","LE","E","LCASO","CASO","N","RET",
                                     "WHILE","OP","SET","OBS","ARR","NUM","CAD","BOOL","FECHA","FECHA_T",
                                     "ARRAY","ID","+","-","*","/","++","--","==","!=",
                                     ">","<",">=","<=","&&","||","!","IF_ELSE","POS_ARRE","LLAM_P","DOS",
-                                    "DOO","DO","CONTEO","ATEX","IDC","IDS","IDO","DEF","DETENER"};
+                                    "DOO","DO","CONTEO","ATEX","IDC","IDS","IDO","DEF","DETENER","ID_ID",
+                                    "FUN_ID2","FUN_SET","FUN_OBS","FUN_SET2","FUN_OBS2"};
     
     public static String RetornStringCSJ(Integer i){
-        return (i<0 || i>59) ? "" : ROL[i];
+        return (i<0 || i>65) ? "" : ROL[i];
     }
     
     

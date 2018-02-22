@@ -114,9 +114,6 @@ LID         ::=   LID:lid COMA ID:id{:
                 :}
 ;
 
-/*LLAMADA     ::=   LLAMADA PUNTO M
-                | M
-;*/
 
 LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
                     RESULT = new Nodo(ConsCJS.DOC_OBT_SET);
@@ -136,6 +133,34 @@ LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
                     RESULT = new Nodo(ConsCJS.ID_CONT);
                     RESULT.addHijo(ConsCJS.ID,id);
                     RESULT.addHijo(new Nodo(ConsCJS.CONTEO));
+                :}
+                | ID:id1 PUNTO ID:id2{:
+                    RESULT = new Nodo(ConsCJS.ID_ID);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2));
+                :}
+                | ID:id1 PAR_IZQ PAR_DER PUNTO ID:id2{:
+                    RESULT = new Nodo(ConsCJS.FUN_ID);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2));
+                :}
+                | ID:id1 PAR_IZQ LE:le PAR_DER PUNTO ID:id2{:
+                    RESULT = new Nodo(ConsCJS.FUN_ID2);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2),le);
+                :}
+                | ID:id PAR_IZQ PAR_DER PUNTO SET:set{:
+                    RESULT = new Nodo(ConsCJS.FUN_SET);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),set);
+                :}
+                | ID:id PAR_IZQ PAR_DER PUNTO OBS:obs{:
+                    RESULT = new Nodo(ConsCJS.FUN_OBS);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),obs);
+                :}
+                | ID:id PAR_IZQ LE:le PAR_DER PUNTO SET:set{:
+                    RESULT = new Nodo(ConsCJS.FUN_SET2);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),set);
+                :}
+                | ID:id PAR_IZQ LE:le PAR_DER PUNTO OBS:obs{:
+                    RESULT = new Nodo(ConsCJS.FUN_ID2);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),obs);
                 :}
                 | ID:id PUNTO SET:set{:
                     RESULT = new Nodo(ConsCJS.ID_SET);

@@ -1,16 +1,26 @@
-//prueba de comentario
+'prueba de comentario
+'/ 
+/como amigos fuimos buenos
+/compañeros
+/'
 
 funcion prueba(a,b,c){
 	si(a > b && c*9 >= 5){
 		dIMV a : a{5};
 	}sino{
 		para(a:10;a > 20;++){
-			Dimv b : 'True';
+			Dimv b : "True";
+                        Dimv c : "31/02/2018";
                         a{4}: y{3};
 		}
+                a.conteo;
+                a.valor;
+                prueba2(a,b).valor;
 	}
 
         mientras(b>45){}
+        Dimv a : "tabla";
+        retornar DOCUMENTO.ObTEner(a);
              
         
 }
@@ -25,7 +35,7 @@ funcion prueba2(ab,cd){
 	Dimv doc : Documento.Obtener("label");
 	
 	doc.Observador("listo",funcion(){
-		Dimv abc : 'true';
+		Dimv abc : "true";
 	});
 
         para(b:0;b<=29;++){

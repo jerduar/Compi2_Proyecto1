@@ -30,8 +30,8 @@ action code
 terminal String ID, NUM, TRUE, FALSE, CADENA;
 terminal String COR_IZQ, COR_DER, PAR_IZQ, PAR_DER, PUNTO_COMA, IGUAL, COMA, MAS, MENOS, POR, DIV, alineado, texto;
 terminal String formato, letra, tamTex, fondoElemento, autoredimension, visible, borde, opaque, colorText, id_token,horizontal,vertical;
-terminal String grupo, negrilla, cursiva, mayuscula, minuscula, capital, tamelemento; 
-non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB,AREA;
+terminal String grupo, negrilla, cursiva, mayuscula, minuscula, capital, centrado,justificado,derecha,izquierda; 
+non terminal Nodo INICIO, L_DEF, DEF, ATRIB, L_SEN, SEN, L_FORM, E, FORM, L_ATRIB,AREA,ALI,BOOL,L_CAD;
 
 precedence left MAS, MENOS;
 precedence left POR, DIV; 
@@ -118,35 +118,35 @@ L_SEN       ::= L_SEN:l_sen SEN:s
                 :}
 ;
 
-SEN         ::= alineado IGUAL E:e PUNTO_COMA
+SEN         ::= alineado IGUAL ALI:ali PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.ALINEADO);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(ali);
                 :}
-                | texto IGUAL E:e PUNTO_COMA
+                | texto IGUAL L_CAD:l_cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.TEXTO);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(l_cad);
                 :}
                 | formato IGUAL L_FORM:l_form PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.FORMATO);
                     RESULT.addHijo(l_form);
                 :}
-                | letra IGUAL E:e PUNTO_COMA
+                | letra IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.LETRA);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
                 :}
                 | tamTex IGUAL E:e PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.TAMTEX);
                     RESULT.addHijo(e);
                 :}
-                | fondoElemento IGUAL E:e PUNTO_COMA
+                | fondoElemento IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.FONDOELE);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
                 :}
                 | autoredimension IGUAL COR_IZQ E:e1 COMA AREA:a COR_DER PUNTO_COMA
                 {:
@@ -158,20 +158,31 @@ SEN         ::= alineado IGUAL E:e PUNTO_COMA
                     RESULT = new Nodo(ConsCSS.VISIBLE);
                     RESULT.addHijo(e);
                 :}
-                | borde IGUAL COR_IZQ E:e1 COMA E:e2 COMA E:e3 COR_DER PUNTO_COMA
+                
+                | borde IGUAL COR_IZQ E:e1 COMA CADENA:cad COMA BOOL:e3 COR_DER PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.BORDE);
-                    RESULT.addHijo(e1,e2,e3);
+                    RESULT.addHijo(e1,new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)),e3);
                 :}
-                | opaque IGUAL E:e PUNTO_COMA
+                | opaque IGUAL BOOL:b PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.OPAQUE);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(b);
                 :}
-                | colorText IGUAL E:e PUNTO_COMA
+                | colorText IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.COLOR_TEXT);
-                    RESULT.addHijo(e);
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                :}
+;
+
+L_CAD           ::= L_CAD:l MAS CADENA:cad{:
+                    RESULT = l;
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                :}
+                | CADENA:cad{:
+                    RESULT = new Nodo(ConsCSS.L_CAD);
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
                 :}
 ;
 
@@ -181,6 +192,20 @@ AREA            ::= horizontal{:
                 | vertical
                 {:
                     RESULT = new Nodo(ConsCSS.VERTI);
+                :}
+;
+
+ALI             ::= justificado{:
+                    RESULT = new Nodo(ConsCSS.JUSTIFICADO);
+                :}
+                | centrado{:
+                    RESULT = new Nodo(ConsCSS.CENTRADO);
+                :}
+                | izquierda{:
+                    RESULT = new Nodo(ConsCSS.IZQ);
+                :}
+                | derecha{:
+                    RESULT = new Nodo(ConsCSS.DER);
                 :}
 ;
 
@@ -215,6 +240,16 @@ FORM         ::= mayuscula:formato
                 | capital:formato
                 {:
                     RESULT = new Nodo(ConsCSS.CAPITAL);
+                :}
+;
+
+BOOL            ::= TRUE:tt  
+                {: 
+                    RESULT = new Nodo(ConsCSS.BOOL,tt); 
+                :}
+                | FALSE:tf
+                {: 
+                    RESULT = new Nodo(ConsCSS.BOOL,tf); 
                 :}
 ;
 
@@ -256,26 +291,9 @@ E           ::= E:e1 MAS:signo E:e2
                 {:  
                     RESULT = e;
                 :}
-                | ID:id           
-                {:  
-                    RESULT = new Nodo(ConsCSS.E);
-                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
-                :}
                 | NUM:num   
                 {:  
                     RESULT = new Nodo(ConsCSS.E);
                     RESULT.addHijo(new Nodo(ConsCSS.NUM,num));
-                :}
-                | TRUE:tt  
-                {: 
-                    RESULT = new Nodo(ConsCSS.BOOL,tt); 
-                :}
-                | FALSE:tf
-                {: 
-                    RESULT = new Nodo(ConsCSS.BOOL,tf); 
-                :}
-                |   CADENA:cad   
-                {: 
-                    RESULT = new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)); 
                 :}
 ;
