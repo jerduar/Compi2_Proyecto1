@@ -21,18 +21,24 @@ public class Nodo {
     private ArrayList<Nodo> hijos;
     private static Integer contador;
     private static String cadena_dot;
+    private Integer fila,columna;
     private Integer cod;
     
-    public Nodo(Integer cod, String valor){
+    public Nodo(Integer cod, String valor, Integer fila, Integer Columna){
         this.cod = cod;
         this.lexema = valor;
         this.hijos = new ArrayList<>();
+        this.fila = fila + 1;
+        this.columna = Columna + 1;
+        
     }
     
     public Nodo(Integer cod){
         this.cod = cod;
         this.lexema = "";
         this.hijos = new ArrayList<>();
+        this.fila = -2;
+        this.columna = -2;
     }
 
     /**
@@ -53,9 +59,10 @@ public class Nodo {
      *
      * @param id
      * @param lexema
+     * @param fila
      */
-    public void addHijo(Integer id, String lexema) {
-        getHijos().add(new Nodo(id, lexema));
+    public void addHijo(Integer id, String lexema, Integer fila, Integer columna) {
+        getHijos().add(new Nodo(id, lexema,fila,columna));
     }
 
     /**
@@ -163,6 +170,47 @@ public class Nodo {
      */
     public void setCod(int cod) {
         this.cod = cod;
+    }
+    
+    public Nodo getHijo(int i){
+        if(getHijos() == null){
+            System.err.println("La lista de hijos es nula");
+            return null;
+        }else {
+            return this.hijos.get(i);
+        }
+    }
+
+    /**
+     * @return the fila
+     */
+    public Integer getFila() {
+        return fila;
+    }
+
+    /**
+     * @param fila the fila to set
+     */
+    public void setFila(Integer fila) {
+        this.fila = fila;
+    }
+
+    /**
+     * @return the columna
+     */
+    public Integer getColumna() {
+        return columna;
+    }
+
+    /**
+     * @param columna the columna to set
+     */
+    public void setColumna(Integer columna) {
+        this.columna = columna;
+    }
+    
+    public int getTam(){
+        return this.getHijos().size();
     }
 
 }

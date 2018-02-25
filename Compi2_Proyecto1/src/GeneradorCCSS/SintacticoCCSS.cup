@@ -60,13 +60,13 @@ L_DEF           ::= L_DEF:l DEF:def
 DEF             ::= ID:id COR_IZQ L_ATRIB:l COR_DER
                 {:
                     RESULT = new Nodo(ConsCSS.DEF);
-                    RESULT.addHijo(ConsCSS.ID,id);
+                    RESULT.addHijo(ConsCSS.ID,id,idleft,idright);
                     RESULT.addHijo(l);
                 :}
                 | ID:id COR_IZQ COR_DER
                 {:
                     RESULT = new Nodo(ConsCSS.DEF);
-                    RESULT.addHijo(ConsCSS.ID,id);
+                    RESULT.addHijo(ConsCSS.ID,id,idleft,idright);
                 :}
 ;
 
@@ -85,24 +85,24 @@ L_ATRIB         ::= L_ATRIB:l_atrib ATRIB:a
 ATRIB           ::= grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:l
                 {:
                     RESULT = new Nodo(ConsCSS.ATRIB_G);
-                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id,idleft,idright));
                     RESULT.addHijo(l);
                 :}
                 | id_token PAR_IZQ ID:id PAR_DER PUNTO_COMA L_SEN:l
                 {:
                     RESULT = new Nodo(ConsCSS.ATRIB_ID);
-                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id,idleft,idright));
                     RESULT.addHijo(l);
                 :}
                 | grupo PAR_IZQ ID:id PAR_DER PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.ATRIB_G);
-                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id,idleft,idright));
                 :}
                 | id_token PAR_IZQ ID:id PAR_DER PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.ATRIB_ID);
-                    RESULT.addHijo(new Nodo(ConsCSS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCSS.ID,id,idleft,idright));
                 :}
 ;
 
@@ -136,7 +136,7 @@ SEN         ::= alineado IGUAL ALI:ali PUNTO_COMA
                 | letra IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.LETRA);
-                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright));
                 :}
                 | tamTex IGUAL E:e PUNTO_COMA
                 {:
@@ -146,7 +146,7 @@ SEN         ::= alineado IGUAL ALI:ali PUNTO_COMA
                 | fondoElemento IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.FONDOELE);
-                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright));
                 :}
                 | autoredimension IGUAL COR_IZQ E:e1 COMA AREA:a COR_DER PUNTO_COMA
                 {:
@@ -162,7 +162,7 @@ SEN         ::= alineado IGUAL ALI:ali PUNTO_COMA
                 | borde IGUAL COR_IZQ E:e1 COMA CADENA:cad COMA BOOL:e3 COR_DER PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.BORDE);
-                    RESULT.addHijo(e1,new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)),e3);
+                    RESULT.addHijo(e1,new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright),e3);
                 :}
                 | opaque IGUAL BOOL:b PUNTO_COMA
                 {:
@@ -172,17 +172,17 @@ SEN         ::= alineado IGUAL ALI:ali PUNTO_COMA
                 | colorText IGUAL CADENA:cad PUNTO_COMA
                 {:
                     RESULT = new Nodo(ConsCSS.COLOR_TEXT);
-                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright));
                 :}
 ;
 
 L_CAD           ::= L_CAD:l MAS CADENA:cad{:
                     RESULT = l;
-                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright));
                 :}
                 | CADENA:cad{:
                     RESULT = new Nodo(ConsCSS.L_CAD);
-                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1)));
+                    RESULT.addHijo(new Nodo(ConsCSS.CAD,cad.substring(1, cad.length()-1),cadleft,cadright));
                 :}
 ;
 
@@ -245,11 +245,11 @@ FORM         ::= mayuscula:formato
 
 BOOL            ::= TRUE:tt  
                 {: 
-                    RESULT = new Nodo(ConsCSS.BOOL,tt); 
+                    RESULT = new Nodo(ConsCSS.BOOL,tt,ttleft,ttright); 
                 :}
                 | FALSE:tf
                 {: 
-                    RESULT = new Nodo(ConsCSS.BOOL,tf); 
+                    RESULT = new Nodo(ConsCSS.BOOL,tf,tfleft,tfright); 
                 :}
 ;
 
@@ -294,6 +294,6 @@ E           ::= E:e1 MAS:signo E:e2
                 | NUM:num   
                 {:  
                     RESULT = new Nodo(ConsCSS.E);
-                    RESULT.addHijo(new Nodo(ConsCSS.NUM,num));
+                    RESULT.addHijo(new Nodo(ConsCSS.NUM,num,numleft,numright));
                 :}
 ;

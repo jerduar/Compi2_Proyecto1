@@ -26,7 +26,7 @@ action code
 terminal String ID, NUMERICO, CADENA, DATE, DATE_T, FALSE, TRUE;
 terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
 terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
-nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, N, RET, WHILE, OP, SET, OBS, ARREGLO;
+nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, N, RET, WHILE, OP, SET, OBS, ARREGLO, LISTA_AR,AR;
 
 precedence left AND;
 precedence left OR;
@@ -68,27 +68,45 @@ L1          ::=   SEN:sen {:
                 :}
 ;
 
-DEC         ::=   DIMV LID
-                | DIMV ID:id LLA_IZQ E:exp LLA_DER{:
+DEC         ::=   DIMV LID:lid{:
+                    RESULT = new Nodo(ConsCJS.DEC);
+                    RESULT.addHijo(lid);
+                :}
+                | DIMV LISTA_AR:lar{:
 
                     RESULT = new Nodo(ConsCJS.DEC);
-                    RESULT.addHijo(ConsCJS.ID,id);
-                    RESULT.addHijo(exp);
+                    RESULT.addHijo(lar);
                 :}
                 | DIMV ASIG:asig {:
-                    RESULT = new Nodo(ConsCJS.DEC);
+                    RESULT = new Nodo(ConsCJS.DEC_ASIG);
                     RESULT.addHijo(asig);
+                :}
+;
+
+LISTA_AR    ::=   LISTA_AR:lar COMA AR:ar{:
+                    RESULT = lar;
+                    RESULT.addHijo(ar);
+                :}
+                | AR:ar{:
+                    RESULT = new Nodo(ConsCJS.LISTA_AR);
+                    RESULT.addHijo(ar);
+                :}
+;
+
+AR          ::= ID:id LLA_IZQ E:e LLA_DER{:
+                    RESULT = new Nodo(ConsCJS.AR);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),e);
                 :}
 ;
 
 ASIG        ::=   ID:id DOS_PUNTOS E:e{:
                     RESULT = new Nodo(ConsCJS.ASIG);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(e);
                 :}
                 | ID:id LLA_IZQ E:e1 LLA_DER DOS_PUNTOS E:e2{:
                     RESULT = new Nodo(ConsCJS.ASIG);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(e1);
                     RESULT.addHijo(e2);
                 :}
@@ -106,11 +124,11 @@ LE          ::=   LE:le COMA E:e{:
 
 LID         ::=   LID:lid COMA ID:id{:
                     RESULT = lid;
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                 :}
                 | ID:id {:
                     RESULT = new Nodo(ConsCJS.LID);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                 :}
 ;
 
@@ -131,59 +149,61 @@ LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
                 :}
                 | ID:id PUNTO CONTEO {:
                     RESULT = new Nodo(ConsCJS.ID_CONT);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(new Nodo(ConsCJS.CONTEO));
                 :}
                 | ID:id1 PUNTO ID:id2{:
                     RESULT = new Nodo(ConsCJS.ID_ID);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2));
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1,id1left,id1right),new Nodo(ConsCJS.ID,id2,id2left,id2right));
                 :}
                 | ID:id1 PAR_IZQ PAR_DER PUNTO ID:id2{:
                     RESULT = new Nodo(ConsCJS.FUN_ID);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2));
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1,id1left,id1right),new Nodo(ConsCJS.ID,id2,id2left,id2right));
                 :}
                 | ID:id1 PAR_IZQ LE:le PAR_DER PUNTO ID:id2{:
                     RESULT = new Nodo(ConsCJS.FUN_ID2);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1),new Nodo(ConsCJS.ID,id2),le);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id1,id1left,id1right),new Nodo(ConsCJS.ID,id2,id2left,id2right),le);
                 :}
                 | ID:id PAR_IZQ PAR_DER PUNTO SET:set{:
                     RESULT = new Nodo(ConsCJS.FUN_SET);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),set);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),set);
                 :}
                 | ID:id PAR_IZQ PAR_DER PUNTO OBS:obs{:
                     RESULT = new Nodo(ConsCJS.FUN_OBS);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),obs);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),obs);
                 :}
                 | ID:id PAR_IZQ LE:le PAR_DER PUNTO SET:set{:
                     RESULT = new Nodo(ConsCJS.FUN_SET2);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),set);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),set);
                 :}
                 | ID:id PAR_IZQ LE:le PAR_DER PUNTO OBS:obs{:
                     RESULT = new Nodo(ConsCJS.FUN_ID2);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),obs);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),obs);
                 :}
                 | ID:id PUNTO SET:set{:
                     RESULT = new Nodo(ConsCJS.ID_SET);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(set);
                 :}
                 | ID:id PUNTO OBS:obs{:
                     RESULT = new Nodo(ConsCJS.ID_OBS);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(obs);
                 :}
                 | ID:id PUNTO ATEXTO PAR_IZQ PAR_DER{:
                     RESULT = new Nodo(ConsCJS.ATEXTO);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(new Nodo(ConsCJS.ATEXTO));
                 :}
+                | ID PAR_IZQ LE PAR_DER PUNTO ATEXTO PAR_IZQ PAR_DER{::}
+                | ID PAR_IZQ PAR_DER PUNTO ATEXTO PAR_IZQ PAR_DER{::}
                 | ID:id PAR_IZQ PAR_DER{:
                     RESULT = new Nodo(ConsCJS.LLAM);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright));
                 :}
                 | ID:id PAR_IZQ LE:le PAR_DER{:
                     RESULT = new Nodo(ConsCJS.LLAM_P);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id),le);
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),le);
                     
                 :}
 ;
@@ -207,25 +227,26 @@ OBS         ::=   OBSERVADOR PAR_IZQ LE:e COMA FUNCION PAR_IZQ PAR_DER LLA_IZQ L
 
 FUN         ::=   FUNCION ID:id PAR_IZQ LID:lid PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FUN);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(lid);
                     RESULT.addHijo(l_sen);
                 :}
                 |FUNCION ID:id PAR_IZQ LID:lid PAR_DER LLA_IZQ LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FUN);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(lid);
                     RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
                 :}
+                //FUNCIONES SIN PARAMETROS
                 | FUNCION ID:id PAR_IZQ PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FUN);
-                    RESULT.addHijo(ConsCJS.ID,id);
-                    RESULT.addHijo(l_sen);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
+                    RESULT.addHijo(new Nodo(ConsCJS.LID),l_sen);
                 :}
                 | FUNCION ID:id PAR_IZQ PAR_DER LLA_IZQ LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FUN);
-                    RESULT.addHijo(ConsCJS.ID,id);
-                    RESULT.addHijo(new Nodo(ConsCJS.L_SEN));
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
+                    RESULT.addHijo(new Nodo(ConsCJS.LID),new Nodo(ConsCJS.L_SEN));
                 :}
 ;
 
@@ -349,7 +370,7 @@ WHILE       ::= MIENTRAS PAR_IZQ E:e PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
 
 FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op PAR_DER LLA_IZQ L_SEN:l_sen LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FOR);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(e1);
                     RESULT.addHijo(e2);
                     RESULT.addHijo(op);
@@ -357,7 +378,7 @@ FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:
                 :}
                 |PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:op PAR_DER LLA_IZQ LLA_DER{:
                     RESULT = new Nodo(ConsCJS.FOR);
-                    RESULT.addHijo(ConsCJS.ID,id);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(e1);
                     RESULT.addHijo(e2);
                     RESULT.addHijo(op);
@@ -366,10 +387,10 @@ FOR        ::= PARA PAR_IZQ ID:id DOS_PUNTOS E:e1 PUNTO_COMA E:e2 PUNTO_COMA OP:
 ;
 
 OP         ::=    INCREMENTO:in {:
-                    RESULT = new Nodo(ConsCJS.OP,in);
+                    RESULT = new Nodo(ConsCJS.OP,in,inleft,inright);
                 :}
                 | DECREMENTO:dec{:
-                    RESULT = new Nodo(ConsCJS.OP,dec);
+                    RESULT = new Nodo(ConsCJS.OP,dec,decleft,decright);
                 :}
 ;
 
@@ -386,95 +407,97 @@ MESSAGE     ::=   MENSAJE PAR_IZQ E:e PAR_DER{:
 ;
 
 E           ::=   E:e1 AND E:e2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EL);
                     Nodo n = new Nodo(ConsCJS.AND);
                     n.addHijo(e1,e2);
                     RESULT.addHijo(n);
                 :}
                 | E:e1 OR E:e2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EL);
                     Nodo n = new Nodo(ConsCJS.OR);
                     n.addHijo(e1,e2);
                     RESULT.addHijo(n);
                 :}
                 | NOT E:e{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EL);
                     Nodo n = new Nodo(ConsCJS.NOT);
                     n.addHijo(e);
                     RESULT.addHijo(n);
                 :}
                 |   E:er1 IGUAL E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.IGUAL);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:er1 DIFERENTE E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.DIFERENTE);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:er1 MAYORQUE E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.MAYORQUE);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:er1 MENORQUE E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.MENORQUE);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:er1 MAYORIGUALQUE E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.MAYORIGUALQUE);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:er1 MENORIGUALQUE E:er2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.ER);
                     Nodo n = new Nodo(ConsCJS.MENORIGUALQUE);
                     n.addHijo(er1,er2);
                     RESULT.addHijo(n);
                 :}
                 | E:ea1 MAS E:ea2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.MAS);
                     n.addHijo(ea1,ea2);
                     RESULT.addHijo(n);
                 :}
                 | E:ea1 MENOS E:ea2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.MENOS);
                     n.addHijo(ea1,ea2);
                     RESULT.addHijo(n);
                 :}
                 | E:ea1 MULT E:ea2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.MULT);
                     n.addHijo(ea1,ea2);
                     RESULT.addHijo(n);
                 :}
                 | E:ea1 DIV E:ea2{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.DIV);
                     n.addHijo(ea1,ea2);
                     RESULT.addHijo(n);
                 :}
                 | E:ea INCREMENTO{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.INCREMENTO);
-                    RESULT.addHijo(ea,n);
+                    n.addHijo(ea);
+                    RESULT.addHijo(n);
                 :}
                 | E:ea DECREMENTO{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.DECREMENTO);
-                    RESULT.addHijo(ea,n);
+                    n.addHijo(ea);
+                    RESULT.addHijo(n);
                 :}
                 | MENOS E:ea{:
-                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.MENOS);
                     RESULT.addHijo(n,ea);
                 :}
@@ -483,28 +506,27 @@ E           ::=   E:e1 AND E:e2{:
                 :}
                 |  NUMERICO:num {:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(ConsCJS.numero,num);
+                    RESULT.addHijo(ConsCJS.numero,num,numleft,numright);
                 :}
                 | CADENA:cad {:
                     RESULT = new Nodo(ConsCJS.E);
-                    cad = cad.substring(1,cad.length()-1);
-                    RESULT.addHijo(ConsCJS.cadena,cad);
+                    RESULT.addHijo(ConsCJS.cadena,cad,cadleft,cadright);
                 :}
                 | DATE:date{:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(ConsCJS.fecha,date);
+                    RESULT.addHijo(ConsCJS.fecha,date,dateleft,dateright);
                 :}
                 | DATE_T:date_t{:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(ConsCJS.fecha_hora,date_t);
+                    RESULT.addHijo(ConsCJS.fecha_hora,date_t,date_tleft,date_tright);
                 :}
-                | FALSE {:
+                | FALSE:f {:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(ConsCJS.booleano,"false");
+                    RESULT.addHijo(ConsCJS.booleano,f,fleft,fright);
                 :}
-                | TRUE{:
+                | TRUE:v{:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(ConsCJS.booleano,"true");
+                    RESULT.addHijo(ConsCJS.booleano,v,vleft,vright);
                 :}
                 | LLAMADA:llamada {:
                     RESULT = new Nodo(ConsCJS.E);
@@ -512,12 +534,12 @@ E           ::=   E:e1 AND E:e2{:
                 :}
                 | ID:id {:
                     RESULT = new Nodo(ConsCJS.E);
-                    RESULT.addHijo(new Nodo(ConsCJS.ID,id));
+                    RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright));
                 :}
                 | ID:id LLA_IZQ E:e LLA_DER{:
                     RESULT = new Nodo(ConsCJS.E);
                     Nodo h = new Nodo(ConsCJS.POS_ARRE);
-                    h.addHijo(new Nodo(ConsCJS.ID,id),e);
+                    h.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright),e);
                     RESULT.addHijo(h);
                 :}
                 | PAR_IZQ E:e PAR_DER{:

@@ -3,6 +3,7 @@
 package GeneradorCJS;
 
 import java_cup.runtime.Symbol;
+import InterpreteCSJ.Expresiones.Auxiliar;
 
 //Scanner para generar C3D
 
@@ -955,7 +956,15 @@ public class scannerCJS implements java_cup.runtime.Scanner {
             }
           case 80: break;
           case 30: 
-            { return new Symbol(symCJS.CADENA, yyline, yycolumn, yytext());
+            { String cad = yytext().substring(1,yytext().length()-1);
+                                
+                                if(Auxiliar.esDateT(cad)){
+                                    return new Symbol(symCJS.DATE_T, yyline, yycolumn, cad);
+                                }
+                                if(Auxiliar.esDate(cad)){
+                                    return new Symbol(symCJS.DATE, yyline, yycolumn, cad);
+                                }
+                                return new Symbol(symCJS.CADENA, yyline, yycolumn, cad);
             }
           case 81: break;
           case 31: 

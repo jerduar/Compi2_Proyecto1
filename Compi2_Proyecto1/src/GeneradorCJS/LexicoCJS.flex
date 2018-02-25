@@ -1,6 +1,7 @@
 package GeneradorCJS;
 
 import java_cup.runtime.Symbol;
+import InterpreteCSJ.Expresiones.Auxiliar;
 
 //Scanner para generar C3D
 %%
@@ -96,7 +97,17 @@ ENTER   = [\ \n]
 <YYINITIAL> "Conteo"        { return new Symbol(symCJS.CONTEO, yyline, yycolumn, yytext()); }
 
 <YYINITIAL> {ID}            { return new Symbol(symCJS.ID, yyline, yycolumn, yytext()); }
-<YYINITIAL> {CADENA}        { return new Symbol(symCJS.CADENA, yyline, yycolumn, yytext()); }
+<YYINITIAL> {CADENA}        { 
+                                String cad = yytext().substring(1,yytext().length()-1);
+                                
+                                if(Auxiliar.esDateT(cad)){
+                                    return new Symbol(symCJS.DATE_T, yyline, yycolumn, cad);
+                                }
+                                if(Auxiliar.esDate(cad)){
+                                    return new Symbol(symCJS.DATE, yyline, yycolumn, cad);
+                                }
+                                return new Symbol(symCJS.CADENA, yyline, yycolumn, cad);
+                            }
 <YYINITIAL> {NUMERICO}      { return new Symbol(symCJS.NUMERICO, yyline, yycolumn, yytext()); }
 <YYINITIAL> {DATE}          { return new Symbol(symCJS.DATE, yyline, yycolumn, yytext()); }
 <YYINITIAL> {DATE_T}        { return new Symbol(symCJS.DATE_T, yyline, yycolumn, yytext()); }

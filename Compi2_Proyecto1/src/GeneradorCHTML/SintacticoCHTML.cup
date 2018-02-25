@@ -24,18 +24,18 @@ action code
 :}  
 
 
-terminal p_coma, menor, mayor, igual,coma;
-terminal pr_chtml, pr_encabezado, pr_cjs, pr_ccss, pr_titulo, pr_cuerpo, pr_panel, pr_texto,pr_fondo;
-terminal pr_caja_texto, pr_imagen, pr_boton, pr_enlace, pr_tabla, pr_fil_t, pr_cb, pr_ct, pr_valor;
-terminal pr_texto_a, pr_caja, pr_opcion, pr_spinner, pr_salto, pr_click, pr_ruta, pr_id;
-terminal pr_grupo, pr_alto, pr_ancho, pr_alineado, pr_atri_ccss, ptodo;
-terminal pr_finchtml, pr_finencabezado, pr_fincjs, pr_finccss, pr_fintitulo, pr_fincuerpo, pr_finpanel, pr_fintexto;
-terminal pr_fincaja_texto, pr_finimagen, pr_finboton, pr_finenlace, pr_fintabla, pr_finfil_t, pr_fincb, pr_finct;
-terminal pr_fintexto_a, pr_fincaja, pr_finopcion, pr_finspinner, pr_parC,pr_parA;
+terminal PUNTO_COMA, MENOR, MAYOR, IGUAL;
+terminal chtml, encabezado, cjs, ccss, titulo, cuerpo, panel, texto_t,fondo;
+terminal caja_texto, imagen, boton, enlace, tabla, fil_t, cb, ct, valor;
+terminal texto_a, caja, opcion, spinner, salto, click, ruta, id;
+terminal grupo, alto, ancho, alineado;
+terminal finchtml, finencabezado, fincjs, finccss, fintitulo, fincuerpo, finpanel, fintexto;
+terminal fincaja_texto, finimagen, finboton, finenlace, fintabla, finfil_t, fincb, finct;
+terminal fintexto_a, fincaja, finopcion, finspinner;
 
-terminal String numero, saltos, ID,texto, cadena,cadena2, otro_simb,simb;
+terminal String NUM, ID, CAD,CAD2;
 
-non terminal Nodo INICIO, H ,EN, CONT_EN, CONT_C, REP, CU, L_AT, L_AT2, L_ATRIBUTOS, L_ATRIBUTOS2;
+non terminal Nodo INICIO, H , CONT_EN, CONT_C, REP, CU, L_AT, L_AT2, L_ATRIBUTOS, L_ATRIBUTOS2;
 non terminal Nodo CU_FIL, CU_T, CONT_FIL,CUERPO,CONT,ENCABEZADO, NUEVO, CAJA_OP,CONT_COL;
 non terminal Nodo E,CUERPO_TABLA;
 
@@ -47,7 +47,7 @@ INICIO          ::= H:val{:
                 :}
 ;
 
-H               ::= menor pr_chtml mayor CONT:val menor pr_finchtml mayor {:
+H               ::= MENOR chtml MAYOR CONT:val MENOR finchtml MAYOR {:
                 
                 :}
 ;
@@ -59,17 +59,17 @@ CONT            ::= ENCABEZADO:val CUERPO:cuerpo{:
 ;
     
 
-ENCABEZADO      ::= menor pr_encabezado mayor CONT_EN:val menor pr_finencabezado mayor{:
+ENCABEZADO      ::= MENOR encabezado MAYOR CONT_EN:val MENOR finencabezado MAYOR{:
             
         
                 :}
 ;
     
-CUERPO          ::= menor pr_cuerpo mayor CONT_C:val menor pr_fincuerpo mayor {:
+CUERPO          ::= MENOR cuerpo MAYOR CONT_C:val MENOR fincuerpo MAYOR {:
         
         
                 :}
-                | menor pr_cuerpo pr_fondo igual E:val2 p_coma mayor CONT_C:val  menor pr_fincuerpo mayor {:
+                | MENOR cuerpo fondo IGUAL E:val2 PUNTO_COMA MAYOR CONT_C:val  MENOR fincuerpo MAYOR {:
                 
                 :}
 ;
@@ -84,24 +84,24 @@ CONT_EN         ::= CONT_EN:val REP:nuevo{:
                 :}
 ;
 
-REP             ::= menor pr_titulo cadena2:val pr_fintitulo mayor {:                
+REP             ::= MENOR titulo CAD2:val fintitulo MAYOR {:                
     
                 :}
-                | menor pr_ccss pr_ruta igual cadena p_coma cadena2:val pr_finccss mayor {:
+                | MENOR ccss ruta IGUAL CAD PUNTO_COMA CAD2:val finccss MAYOR {:
         
         
                 :}
-                | menor pr_cjs pr_ruta igual cadena p_coma cadena2:val pr_fincjs mayor {:
+                | MENOR cjs ruta IGUAL CAD PUNTO_COMA CAD2:val fincjs MAYOR {:
         
         
                 :}    
-                | menor pr_ccss pr_ruta igual cadena p_coma mayor  menor pr_finccss mayor {:
+                | MENOR ccss ruta IGUAL CAD PUNTO_COMA MAYOR  MENOR finccss MAYOR {:
         
                 :}
-                |menor pr_titulo mayor  menor pr_fintitulo mayor {:
+                |MENOR titulo MAYOR  MENOR fintitulo MAYOR {:
         
                 :}
-                | menor pr_cjs pr_ruta igual cadena p_coma mayor  menor pr_fincjs mayor {:
+                | MENOR cjs ruta IGUAL CAD PUNTO_COMA MAYOR  MENOR fincjs MAYOR {:
          
                 :}
 ;
@@ -115,231 +115,213 @@ CONT_C          ::= CONT_C:val CU:valor{:
                 :}
 ;
 
-CU              ::= menor pr_panel L_AT:val p_coma mayor CONT_C:valor menor pr_finpanel mayor{:
+CU              ::= MENOR panel L_AT:val PUNTO_COMA MAYOR CONT_C:valor MENOR finpanel MAYOR{:
         
         
                 :}
-                |menor pr_panel mayor CONT_C:val menor pr_finpanel mayor{:
+                |MENOR panel MAYOR CONT_C:val MENOR finpanel MAYOR{:
                 
                 :}
-                |menor pr_panel L_AT:val p_coma mayor  menor pr_finpanel mayor{:
+                |MENOR panel L_AT:val PUNTO_COMA MAYOR  MENOR finpanel MAYOR{:
                 
                 :}  
-                |menor pr_panel mayor  menor pr_finpanel mayor{:
+                |MENOR panel MAYOR  MENOR finpanel MAYOR{:
         
                 :}
-                |menor pr_texto L_AT:val p_coma cadena2:id pr_fintexto mayor{:
+                |MENOR texto_t L_AT:val PUNTO_COMA CAD2:id fintexto MAYOR{:
         
                 :}
-                |menor pr_texto L_AT:val p_coma mayor menor pr_fintexto mayor{:
+                |MENOR texto_t L_AT:val PUNTO_COMA MAYOR MENOR fintexto MAYOR{:
                 
                 :}
-                |menor pr_texto mayor menor pr_fintexto mayor{:
+                |MENOR texto_t MAYOR MENOR fintexto MAYOR{:
         
                 :}
-                |menor pr_texto cadena2:id pr_fintexto mayor{:
+                |MENOR texto_t CAD2:id fintexto MAYOR{:
         
                 :}
-                |menor pr_caja_texto L_AT:val p_coma cadena2:id pr_fincaja_texto mayor{:
+                |MENOR caja_texto L_AT:val PUNTO_COMA CAD2:id fincaja_texto MAYOR{:
         
                 :}
-                |menor pr_caja_texto L_AT:val p_coma mayor menor pr_fincaja_texto mayor{:
+                |MENOR caja_texto L_AT:val PUNTO_COMA MAYOR MENOR fincaja_texto MAYOR{:
         
                 :}
-                |menor pr_caja_texto cadena2:val pr_fincaja_texto mayor{:
+                |MENOR caja_texto CAD2:val fincaja_texto MAYOR{:
         
                 :}
-                |menor pr_caja_texto mayor menor pr_fincaja_texto mayor{:
+                |MENOR caja_texto MAYOR MENOR fincaja_texto MAYOR{:
         
                 :}
-                |menor pr_imagen L_AT2:val p_coma cadena2:id pr_finimagen mayor{:
+                |MENOR imagen L_AT2:val PUNTO_COMA CAD2:id finimagen MAYOR{:
         
                 :}    
-                |menor pr_imagen L_AT2:val p_coma mayor menor pr_finimagen mayor{:
+                |MENOR imagen L_AT2:val PUNTO_COMA MAYOR MENOR finimagen MAYOR{:
         
                 :}
-                |menor pr_imagen cadena2:val pr_finimagen mayor{:
+                |MENOR imagen CAD2:val finimagen MAYOR{:
         
                 :}
-                |menor pr_imagen mayor menor pr_finimagen mayor{:
+                |MENOR imagen MAYOR MENOR finimagen MAYOR{:
         
                 :}
-                |menor pr_boton L_AT2:val  p_coma cadena2:id pr_finboton mayor{:
+                |MENOR boton L_AT2:val  PUNTO_COMA CAD2:id finboton MAYOR{:
         
                 :}
-                |menor pr_boton L_AT2:val  p_coma mayor menor pr_finboton mayor{:
+                |MENOR boton L_AT2:val  PUNTO_COMA MAYOR MENOR finboton MAYOR{:
         
                 //agregar el nombre por defecto
                 :}
-                |menor pr_boton cadena2:val pr_finboton mayor{:
+                |MENOR boton CAD2:val finboton MAYOR{:
         
                 :}    
-                |menor pr_boton mayor menor pr_finboton mayor{:
+                |MENOR boton MAYOR MENOR finboton MAYOR{:
         
                 :}
-                |menor pr_enlace pr_ruta igual cadena:cad p_coma cadena2:val pr_finenlace mayor{:
+                |MENOR enlace ruta IGUAL CAD:cad PUNTO_COMA CAD2:val finenlace MAYOR{:
         
                 :}
-                |menor pr_tabla L_AT:val p_coma mayor CU_T:cont menor pr_fintabla mayor{:
+                |MENOR tabla L_AT:val PUNTO_COMA MAYOR CU_T:cont MENOR fintabla MAYOR{:
                 
                 :}
-                |menor pr_enlace pr_ruta igual cadena:val p_coma mayor menor pr_finenlace mayor{:
+                |MENOR enlace ruta IGUAL CAD:val PUNTO_COMA MAYOR MENOR finenlace MAYOR{:
                     
                 //agregar el nombre de la ruta ya que no tiene otro nombre
                 :}
-                |menor pr_tabla mayor CU_T:val menor pr_fintabla mayor{:
+                |MENOR tabla MAYOR CU_T:val MENOR fintabla MAYOR{:
                 
                 :}
-                |menor pr_tabla mayor  menor pr_fintabla mayor{:        
+                |MENOR tabla MAYOR  MENOR fintabla MAYOR{:        
 
                 :}
-                |menor pr_tabla cadena2:val pr_fintabla mayor{:
+                |MENOR tabla CAD2:val fintabla MAYOR{:
                 
 
                 :}
-                |menor pr_texto_a L_AT:val p_coma cadena2:cont pr_fintexto_a mayor{:
+                |MENOR texto_a L_AT:val PUNTO_COMA CAD2:cont fintexto_a MAYOR{:
 
                 :}
-                |menor pr_texto_a L_AT:val p_coma mayor menor pr_fintexto_a mayor{:
+                |MENOR texto_a L_AT:val PUNTO_COMA MAYOR MENOR fintexto_a MAYOR{:
         
                 :}
-                |menor pr_texto_a cadena2:val pr_fintexto_a mayor{:
+                |MENOR texto_a CAD2:val fintexto_a MAYOR{:
         
                 :}
-                |menor pr_texto_a mayor menor pr_fintexto_a mayor{:
+                |MENOR texto_a MAYOR MENOR fintexto_a MAYOR{:
         
                 :}
-                |menor pr_caja L_AT2:val p_coma mayor CAJA_OP:cont menor pr_fincaja mayor{:
+                |MENOR caja L_AT2:val PUNTO_COMA MAYOR CAJA_OP:cont MENOR fincaja MAYOR{:
         
                 :}
-                |menor pr_caja mayor CAJA_OP:val menor pr_fincaja mayor{:
+                |MENOR caja MAYOR CAJA_OP:val MENOR fincaja MAYOR{:
         
                 :}
-                |menor pr_spinner L_AT:val p_coma cadena2:n pr_finspinner mayor{:
+                |MENOR spinner L_AT:val PUNTO_COMA CAD2:n finspinner MAYOR{:
          
                 :}
-                |menor pr_spinner L_AT:val p_coma mayor menor pr_finspinner mayor{:
+                |MENOR spinner L_AT:val PUNTO_COMA MAYOR MENOR finspinner MAYOR{:
         
                 :}
-                |menor pr_spinner cadena2:n pr_finspinner mayor{:
+                |MENOR spinner CAD2:n finspinner MAYOR{:
          
                 :}
-                |menor pr_spinner mayor  menor pr_finspinner mayor{:
+                |MENOR spinner MAYOR  MENOR finspinner MAYOR{:
          
                 :}
-                |menor pr_salto mayor {:
+                |MENOR salto MAYOR {:
         
                 :}
 ;
 
-CAJA_OP ::= CAJA_OP:val NUEVO:otro{:
+CAJA_OP         ::= CAJA_OP:val NUEVO:otro{:
             
-        :}
-        
-        |NUEVO:val {:
+                :}
+                |NUEVO:val {:
             
-        :}
+                :}
 ;
 
-NUEVO ::= menor pr_opcion pr_valor igual E:val p_coma mayor  menor pr_finopcion mayor{:
+NUEVO           ::= MENOR opcion valor IGUAL E:val PUNTO_COMA MAYOR  MENOR finopcion MAYOR{:
             
             
-        :}
-          |menor pr_opcion pr_valor igual E:val p_coma cadena2:id pr_finopcion mayor{:
-            
-
+                :}
+                |MENOR opcion valor IGUAL E:val PUNTO_COMA CAD2:id finopcion MAYOR{:
         
-        :}
+                :}
 ;
     
 
-L_AT ::= L_AT:val p_coma L_ATRIBUTOS:hijo{:
-        
-        
-        :}
-        |L_ATRIBUTOS:val {:
-            
-        
-        :}
+L_AT            ::= L_AT:val PUNTO_COMA L_ATRIBUTOS:hijo{:
+         
+                :}
+                |L_ATRIBUTOS:val {:
+                    
+                :}
 ;
 
-L_AT2 ::= L_AT2:val p_coma L_ATRIBUTOS2:hijo{:
+L_AT2           ::= L_AT2:val PUNTO_COMA L_ATRIBUTOS2:hijo{:
             
-        :}
-        |L_ATRIBUTOS2:val {:
+                :}
+                |L_ATRIBUTOS2:val {:
             
-        :}
+                :}
 ;
 
-L_ATRIBUTOS ::= pr_click igual E:val {:
+L_ATRIBUTOS     ::= click IGUAL E:val {:
             
-            :}
+                :}
 
+                | id:id IGUAL:asig E:val {:
+                        
+                :}
+                | grupo:grupo IGUAL:asig E:val {:
+                        
+                :}
 
-
-            | pr_id:id igual:asig E:val {:
+                | alto IGUAL E:val {:
+                        
+                :}
+                | ancho:ancho IGUAL:asig E:val {:            
             
+                :}
+                | alineado:ali IGUAL:asig E:val {:
             
-            :}
-
-            | pr_grupo:grupo igual:asig E:val {:
-            
-            
-            :}
-
-
-            | pr_alto igual E:val {:
-            
-            
-            :}
-
-            | pr_ancho:ancho igual:asig E:val {:
-            
-            
-            
-            :}
-
-            | pr_alineado:ali igual:asig E:val {:
-            
-            :};
+                :}
+;
             
 
-L_ATRIBUTOS2 ::= pr_click igual E:val {:
+L_ATRIBUTOS2 ::= click IGUAL E:val {:
             
             :}
 
           
 
-            | pr_ruta:ruta igual:asig E:val {:
+            | ruta:ruta IGUAL:asig E:val {:
             
 
             :}
-            
-
-
-            | pr_id:id igual:asig E:val {:
-            
+            | id:id IGUAL:asig E:val {:
+             
             
             :}
 
-            | pr_grupo:grupo igual:asig E:val {:
+            | grupo:grupo IGUAL:asig E:val {:
             
             
             :}
 
 
-            | pr_alto igual E:val {:
+            | alto IGUAL E:val {:
             
             
             :}
 
-            | pr_ancho:ancho igual:asig E:val {:
+            | ancho:ancho IGUAL:asig E:val {:
             
             
             
             :}
 
-            | pr_alineado:ali igual:asig E:val {:
+            | alineado:ali IGUAL:asig E:val {:
             
             :}
 ;
@@ -355,16 +337,16 @@ CU_T ::= CU_T:val CUERPO_TABLA:cuerpo{:
         :}
 ;
 
-CUERPO_TABLA ::= menor pr_fil_t L_AT:atr p_coma mayor CU_FIL:val menor pr_finfil_t mayor {:
+CUERPO_TABLA ::= MENOR fil_t L_AT:atr PUNTO_COMA MAYOR CU_FIL:val MENOR finfil_t MAYOR {:
             
         :}
 
 
-        |menor pr_fil_t mayor CU_FIL:val menor pr_finfil_t mayor {:
+        |MENOR fil_t MAYOR CU_FIL:val MENOR finfil_t MAYOR {:
             
         :}
 
-         |menor pr_fil_t mayor menor pr_finfil_t mayor {:
+         |MENOR fil_t MAYOR MENOR finfil_t MAYOR {:
             
             
         :} 
@@ -378,88 +360,88 @@ CU_FIL ::= CU_FIL:val CONT_FIL:id{:
         
         :};
 
-CONT_FIL ::= menor pr_cb L_AT:atr p_coma mayor CONT_COL:cont  menor pr_fincb mayor{:
+CONT_FIL ::= MENOR cb L_AT:atr PUNTO_COMA MAYOR CONT_COL:cont  MENOR fincb MAYOR{:
             
             :}
 
-            |menor pr_cb L_AT:atr p_coma cadena2:cont pr_fincb mayor{:
+            |MENOR cb L_AT:atr PUNTO_COMA CAD2:cont fincb MAYOR{:
             
             :}
             
-            |menor pr_cb L_AT:atr p_coma mayor menor pr_fincb mayor{:
-            
-            :}
-
-            |menor pr_cb mayor CONT_COL:cont  menor pr_fincb mayor{:
+            |MENOR cb L_AT:atr PUNTO_COMA MAYOR MENOR fincb MAYOR{:
             
             :}
 
-            |menor pr_cb cadena2:cont pr_fincb mayor{:
+            |MENOR cb MAYOR CONT_COL:cont  MENOR fincb MAYOR{:
             
             :}
 
-            |menor pr_cb mayor  menor pr_fincb mayor{:
-            
-            
-            :}
-            
-            |menor pr_ct mayor CONT_COL:cont menor pr_finct mayor{:
+            |MENOR cb CAD2:cont fincb MAYOR{:
             
             :}
 
-            |menor pr_ct mayor menor pr_finct mayor{:
+            |MENOR cb MAYOR  MENOR fincb MAYOR{:
+            
+            
+            :}
+            
+            |MENOR ct MAYOR CONT_COL:cont MENOR finct MAYOR{:
             
             :}
 
-            |menor pr_ct cadena2:cont pr_finct mayor{:
+            |MENOR ct MAYOR MENOR finct MAYOR{:
+            
+            :}
+
+            |MENOR ct CAD2:cont finct MAYOR{:
             
             :}            
-            |menor pr_ct L_AT:atr p_coma cadena2:cont pr_finct mayor{:
+            |MENOR ct L_AT:atr PUNTO_COMA CAD2:cont finct MAYOR{:
             
             :}
 
-            |menor pr_ct L_AT:atr p_coma mayor menor pr_finct mayor{:
+            |MENOR ct L_AT:atr PUNTO_COMA MAYOR MENOR finct MAYOR{:
             
             :}
             
-            |menor pr_ct L_AT:atr p_coma mayor CONT_COL:cont menor pr_finct mayor{:
+            |MENOR ct L_AT:atr PUNTO_COMA MAYOR CONT_COL:cont MENOR finct MAYOR{:
             
             :}
 ;
 
-CONT_COL    ::= menor pr_imagen L_AT2:val p_coma cadena2:id pr_finimagen mayor{:
+CONT_COL    ::= MENOR imagen L_AT2:val PUNTO_COMA CAD2:id finimagen MAYOR{:
         
         
             :}
-            |menor pr_imagen L_AT2:val p_coma mayor menor pr_finimagen mayor{:
+            |MENOR imagen L_AT2:val PUNTO_COMA MAYOR MENOR finimagen MAYOR{:
         
             :}
-            |menor pr_imagen cadena2:val pr_finimagen mayor{:
+            |MENOR imagen CAD2:val finimagen MAYOR{:
            
             :}
-            |menor pr_imagen mayor menor pr_finimagen mayor{:
+            |MENOR imagen MAYOR MENOR finimagen MAYOR{:
         
         //agregar la imagen de no se encontro imagen      
             :}
-            |menor pr_boton L_AT2:val  p_coma cadena2:id pr_finboton mayor{:
+            |MENOR boton L_AT2:val  PUNTO_COMA CAD2:id finboton MAYOR{:
               
             :}
-            |menor pr_boton L_AT2:val  p_coma mayor menor pr_finboton mayor{:
+            |MENOR boton L_AT2:val  PUNTO_COMA MAYOR MENOR finboton MAYOR{:
                 
             :}
-            |menor pr_boton cadena2:val pr_finboton mayor{:
+            |MENOR boton CAD2:val finboton MAYOR{:
         
             :}    
-            |menor pr_boton mayor menor pr_finboton mayor{:
+            |MENOR boton MAYOR MENOR finboton MAYOR{:
    
             :}
 ;
         
-E           ::= cadena:cad 
+E           ::= CAD:cad 
             {: 
     
             :}
-            | numero:num{:
+            | NUM:num{:
 
             :}   
             | ID:id {:

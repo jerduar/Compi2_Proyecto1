@@ -1,16 +1,20 @@
-'prueba de comentario
-'/ 
-/como amigos fuimos buenos
-/compañeros
-/'
 
-funcion prueba(a,b,c){
-	si(a > b && c*9 >= 5){
+
+dIMV W {"28/02/2018" + "06/01/2019"};
+
+
+funcion prueba(){
+
+}
+
+funcion prueba(){
+    
+	si(a > b > C > H && c*9 >= 5){
 		dIMV a : a{5};
 	}sino{
 		para(a:10;a > 20;++){
 			Dimv b : "True";
-                        Dimv c : "31/02/2018";
+                        Dimv c : "10/02/2018 04:56:09";
                         a{4}: y{3};
 		}
                 a.conteo;
@@ -19,10 +23,17 @@ funcion prueba(a,b,c){
 	}
 
         mientras(b>45){}
+        
         Dimv a : "tabla";
         retornar DOCUMENTO.ObTEner(a);
-             
         
+}
+
+Dimv ab;
+
+
+funcion prueba2(a,c){
+
 }
 
 funcion prueba2(ab,cd){

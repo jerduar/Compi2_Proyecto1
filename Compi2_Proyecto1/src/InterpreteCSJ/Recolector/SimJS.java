@@ -12,20 +12,31 @@ import AST.Nodo;
  * @author jerduar
  */
 public class SimJS {
+
+    /**
+     * @return the no_param
+     */
+    public Integer getNo_param() {
+        return no_param;
+    }
     private Integer rol;
     private String nombre;
     
     //ATRIBUTOS DE UNA VARIABLE
     private Integer tipo_var;
     private Nodo valor;
+    private boolean esArreglo;
     
     //ATRIBUTOS DE UNA FUNCION
     private Nodo sentencias;
     private Nodo parametros;
+    private Integer no_param;
     
     //ATRIBUTOS DE UN ARREGLO
     private Nodo elemento;
     private Integer no_elementos;
+    
+    
     
     private SimJS(){
         
@@ -33,29 +44,33 @@ public class SimJS {
     
     /**
      *
-     * @param nombre
+     * @param variable
      * @return simJS de tipo variable
      */
-    public static SimJS getSimVar(String nombre){
+    public static SimJS getSimVar(Nodo variable){
         SimJS sim = new SimJS();
-        sim.setNombre(nombre);
+        sim.setNombre(variable.getLexema());
         sim.setRol(ConsJS.variable);
+        sim.setNo_param(0);
+        sim.setEsArreglo(false);
         return sim;
+        
+        
     }
     
     /**
      *
-     * @param nombre
-     * @param param
-     * @param sen
+     * @param funcion
      * @return SimJS de tipo Funcion
      */
-    public static SimJS getSimFuncion(String nombre, Nodo param, Nodo sen){
+    public static SimJS getSimFuncion(Nodo funcion){
         SimJS sim = new SimJS();
-        sim.setNombre(nombre);
-        sim.setParametros(param);
-        sim.setSentencias(sen);
+        sim.setNombre(funcion.getHijo(0).getLexema());
+        sim.setNo_param((Integer) funcion.getHijo(1).getHijos().size());
+        sim.setParametros(funcion.getHijo(1));
+        sim.setSentencias(funcion.getHijo(2));
         sim.setRol(ConsJS.funcion);
+        sim.setEsArreglo(false);
         return sim;
     }
     
@@ -70,7 +85,10 @@ public class SimJS {
         SimJS sim = new SimJS();
         sim.setElemento(ele);
         sim.setNo_elementos(no_ele);
-        sim.setRol(ConsJS.arreglo);
+        sim.setNombre(nombre);
+        sim.setRol(ConsJS.variable);
+        sim.setNo_param(0);
+        sim.setEsArreglo(true);
         return sim;
     }
 
@@ -184,5 +202,26 @@ public class SimJS {
      */
     public void setNo_elementos(Integer no_elementos) {
         this.no_elementos = no_elementos;
+    }
+
+    /**
+     * @param no_param the no_param to set
+     */
+    public void setNo_param(Integer no_param) {
+        this.no_param = no_param;
+    }
+
+    /**
+     * @return the esArreglo
+     */
+    public boolean isEsArreglo() {
+        return esArreglo;
+    }
+
+    /**
+     * @param esArreglo the esArreglo to set
+     */
+    public void setEsArreglo(boolean esArreglo) {
+        this.esArreglo = esArreglo;
     }
 }

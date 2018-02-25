@@ -18,6 +18,10 @@ public class TablaSymCSJ {
     private Hashtable<Integer,SimJS> tabla;
     Integer nivel;
     
+    public TablaSymCSJ(){
+        
+    }
+    
     public TablaSymCSJ(Integer nivel){        
         this.hijo = null;
         this.padre = null;
@@ -25,8 +29,9 @@ public class TablaSymCSJ {
         this.nivel = nivel;
     }
     
-    public Boolean InsertarSimJS(String llave, SimJS sim){
-        Integer key = GenerarKey(llave,sim.getRol());
+    public Boolean InsertarSimJS(SimJS sim){
+        
+        Integer key = GenerarKey(sim.getNombre(),sim.getRol(),sim.getNo_param());
         
         if(!ExisteSimJS(key)){
             this.tabla.put(key, sim);
@@ -40,18 +45,22 @@ public class TablaSymCSJ {
         if(tabla.containsKey(key)){
             return true;
         }else if(this.padre != null){
-            return (this.padre.nivel == 0)? false : this.padre.ExisteSimJS(key);
+            return this.padre.ExisteSimJS(key);
         }else{
             return false;
         }
     }
     
-    private Integer GenerarKey(String llave, int rol){
+    private Integer GenerarKey(String llave, int rol, int num_param){
         Integer key = 0;
         for(int i = 0; i < llave.length(); i++){
-            key += i * llave.charAt(i);
+            key += (i+1) * llave.charAt(i);
         }
         
-        return key + rol;
+        return key + rol + num_param;
+    }
+    
+    public void MostrarTabla(){
+        
     }
 }
