@@ -37,6 +37,8 @@ MAS		= "+"
 MENOS		= "-"
 MULT       	= "*"
 DIV             = "/"
+POT             = "^"
+MOD             = "%"
 INCREMENTO      = "++"
 DECREMENTO      = "--"
 
@@ -118,6 +120,8 @@ ENTER   = [\ \n]
 <YYINITIAL> {MENOS}	    { return new Symbol(symCJS.MENOS, yyline, yycolumn, yytext()); }
 <YYINITIAL> {MULT}          { return new Symbol(symCJS.MULT, yyline, yycolumn, yytext()); }
 <YYINITIAL> {DIV}	    { return new Symbol(symCJS.DIV, yyline, yycolumn, yytext()); }
+<YYINITIAL> {POT}	    { return new Symbol(symCJS.POT, yyline, yycolumn, yytext()); }
+<YYINITIAL> {MOD}	    { return new Symbol(symCJS.MOD, yyline, yycolumn, yytext()); }
 <YYINITIAL> {INCREMENTO}    { return new Symbol(symCJS.INCREMENTO, yyline, yycolumn, yytext()); }
 <YYINITIAL> {DECREMENTO}    { return new Symbol(symCJS.DECREMENTO, yyline, yycolumn, yytext()); }
 

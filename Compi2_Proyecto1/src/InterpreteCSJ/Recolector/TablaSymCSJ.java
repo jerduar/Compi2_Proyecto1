@@ -53,6 +53,7 @@ public class TablaSymCSJ {
     
     private Integer GenerarKey(String llave, int rol, int num_param){
         Integer key = 0;
+        llave = llave.toLowerCase();
         for(int i = 0; i < llave.length(); i++){
             key += (i+1) * llave.charAt(i);
         }

@@ -23,7 +23,7 @@ public class Proyecto1_201442819 {
     public static void main(String[] args) {
         try {
             AnalizadorCJS.AnalizarCJS("src\\GeneradorCJS\\prueba_js.cjs");
-            AnalizadorCCSS.AnalizarCCSS("src\\GeneradorCCSS\\prueba_css.ccss");
+            //AnalizadorCCSS.AnalizarCCSS("src\\GeneradorCCSS\\prueba_css.ccss");
         } catch (IOException ex) {
             Logger.getLogger(Proyecto1_201442819.class.getName()).log(Level.SEVERE, null, ex);
         }

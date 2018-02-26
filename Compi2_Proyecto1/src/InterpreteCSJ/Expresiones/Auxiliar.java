@@ -8,14 +8,7 @@ package InterpreteCSJ.Expresiones;
 import InterpreteCSJ.Recolector.ConsJS;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
@@ -47,7 +40,7 @@ public class Auxiliar {
         try {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
             df.setLenient(false);
-            Date result =  df.parse(date);
+            Date result = df.parse(date);
             return true;
         } catch (ParseException pe) {
             return false;
@@ -59,23 +52,38 @@ public class Auxiliar {
         try {
             DateFormat df = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss");
             df.setLenient(false);
-            Date result =  df.parse(dateh);
+            Date result = df.parse(dateh);
             return true;
         } catch (ParseException pe) {
             return false;
         }
     }
     
-    public static boolean toBool(String val){
+    public static Date toDateH(String dateh){
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss");
+            df.setLenient(false);
+            Date result = df.parse(dateh);
+            return result;
+        } catch (ParseException pe) {
+            return null;
+        }
+    }
+
+    public static boolean esDateoDT(Integer valor) {
+        return esTipo(valor, ConsJS.FECHA) || esTipo(valor, ConsJS.FECHA_HORA);
+    }
+
+    public static boolean toBool(String val) {
         return Boolean.parseBoolean(val);
     }
-    
-    public static Double BoolToNum(String bool){
-         if(Boolean.parseBoolean(bool)){
-             return 1.0;
-         }else{
-             return 0.0;
-         }
+
+    public static Double BoolToNum(String bool) {
+        if (Boolean.parseBoolean(bool)) {
+            return 1.0;
+        } else {
+            return 0.0;
+        }
     }
 
 }

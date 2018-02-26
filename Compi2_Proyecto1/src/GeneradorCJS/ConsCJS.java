@@ -10,6 +10,7 @@ package GeneradorCJS;
  * @author jerdu
  */
 public class ConsCJS {
+
     //INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, N, RET, WHILE, OP, SET, OBS, ARREGLO;
     //NO TERMINALES
     public static final Integer INICIO = 0;
@@ -37,7 +38,7 @@ public class ConsCJS {
     public static final Integer SET = 22;
     public static final Integer OBS = 23;
     public static final Integer ARR = 24;
-    
+
     //CONSTANTES PARA LOS TIPOS DE DATOS
     public static final Integer numero = 25;
     public static final Integer cadena = 26;
@@ -46,7 +47,7 @@ public class ConsCJS {
     public static final Integer fecha_hora = 29;
     public static final Integer arreglo = 30;
     public static final Integer ID = 31;
-    
+
     //terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, 
     //MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
     //terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
@@ -65,7 +66,7 @@ public class ConsCJS {
     public static final Integer AND = 44;
     public static final Integer OR = 45;
     public static final Integer NOT = 46;
-    
+
     //CASOS ESPECIALES
     public static final Integer IF_ELSE = 47;
     public static final Integer POS_ARRE = 48;
@@ -87,29 +88,32 @@ public class ConsCJS {
     public static final Integer FUN_OBS = 63;
     public static final Integer FUN_OBS2 = 64;
     public static final Integer FUN_SET2 = 65;
-    
+
     public static final Integer DEC_ASIG = 66;
     public static final Integer LISTA_AR = 67;
     public static final Integer AR = 68;
-    
+
     //public static final Integer EXPRESION = 69;
     public static final Integer EL = 69;
     public static final Integer EA = 70;
     public static final Integer ER = 71;
-    
-    
-    private static String[] ROL = {"INICIO","L1","DEC","FUN","IF","LLAM","ASIG","L_SEN","SEN","SWITCH",
-                                    "FOR","LID","MSG","SOUT","LE","E","LCASO","CASO","N","RET",
-                                    "WHILE","OP","SET","OBS","ARR","NUM","CAD","BOOL","FECHA","FECHA_T",
-                                    "ARRAY","ID","+","-","*","/","++","--","==","!=",
-                                    ">","<",">=","<=","&&","||","!","IF_ELSE","POS_ARRE","LLAM_P","DOS",
-                                    "DOO","DO","CONTEO","ATEX","IDC","IDS","IDO","DEF","DETENER","ID_ID",
-                                    "FUN_ID2","FUN_SET","FUN_OBS","FUN_SET2","FUN_OBS2","DEC_ASIG","LISTA_AR","AR","EL","EA","ER"};
-    
-    public static String RetornStringCSJ(Integer i){
-        return (i<0 || i>71) ? "" : ROL[i];
+
+    //
+    public static final Integer POT = 72;
+    public static final Integer MOD = 73;
+
+    private static String[] ROL = {"INICIO", "L1", "DEC", "FUN", "IF", "LLAM", "ASIG", "L_SEN", "SEN", "SWITCH",
+        "FOR", "LID", "MSG", "SOUT", "LE", "E", "LCASO", "CASO", "N", "RET",
+        "WHILE", "OP", "SET", "OBS", "ARR", "NUM", "CAD", "BOOL", "FECHA", "FECHA_T",
+        "ARRAY", "ID", "+", "-", "*", "/", "++", "--", "==", "!=",
+        ">", "<", ">=", "<=", "&&", "||", "!", "IF_ELSE", "POS_ARRE", "LLAM_P", "DOS",
+        "DOO", "DO", "CONTEO", "ATEX", "IDC", "IDS", "IDO", "DEF", "DETENER", "ID_ID",
+        "FUN_ID2", "FUN_SET", "FUN_OBS", "FUN_SET2", "FUN_OBS2", "DEC_ASIG", "LISTA_AR", "AR", "EL", "EA",
+        "ER", "^", "%"};
+
+    public static String RetornStringCSJ(Integer i) {
+
+        return (i < 0 || i > 73) ? "" : ROL[i];
     }
-    
-    
-    
+
 }

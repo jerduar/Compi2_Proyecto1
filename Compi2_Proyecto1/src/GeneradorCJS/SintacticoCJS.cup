@@ -24,7 +24,7 @@ action code
 :}
 
 terminal String ID, NUMERICO, CADENA, DATE, DATE_T, FALSE, TRUE;
-terminal String MAS, MENOS, MULT, DIV, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
+terminal String MAS, MENOS, MULT, DIV, POT, MOD, INCREMENTO, DECREMENTO, IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE, AND, OR, NOT, PAR_IZQ, PAR_DER, LLA_DER, LLA_IZQ, PUNTO, PUNTO_COMA, COMA, DOS_PUNTOS;
 terminal String MIENTRAS, PARA, SI, SINO, IMPRIMIR, DIMV, RETORNAR, DETENER, SELECCIONAR, CASO, DEFECTO, DOCUMENTO, OBSERVADOR, ATEXTO, SETELEMENTO, MENSAJE, FUNCION, OBTENER, CONTEO;
 nonterminal Nodo INICIAL, A, L1, DEC, FUN, IF, LLAMADA, ASIG, L_SEN, SEN, SWITCH, FOR, LID, MESSAGE, SOUT, LE, E, LCASO, CAS, N, RET, WHILE, OP, SET, OBS, ARREGLO, LISTA_AR,AR;
 
@@ -34,6 +34,8 @@ precedence left NOT;
 precedence left IGUAL, DIFERENTE, MAYORQUE, MENORQUE, MAYORIGUALQUE, MENORIGUALQUE;
 precedence left MAS, MENOS;
 precedence left MULT, DIV;
+precedence right POT;
+precedence left MOD;
 precedence left INCREMENTO;
 precedence left DECREMENTO;
 
@@ -484,6 +486,18 @@ E           ::=   E:e1 AND E:e2{:
                     n.addHijo(ea1,ea2);
                     RESULT.addHijo(n);
                 :}
+                | E:ea1 POT E:ea2{:
+                    RESULT = new Nodo(ConsCJS.EA);
+                    Nodo n = new Nodo(ConsCJS.POT);
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
+                | E:ea1 MOD E:ea2{:
+                    RESULT = new Nodo(ConsCJS.EA);
+                    Nodo n = new Nodo(ConsCJS.MOD);
+                    n.addHijo(ea1,ea2);
+                    RESULT.addHijo(n);
+                :}
                 | E:ea INCREMENTO{:
                     RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.INCREMENTO);
@@ -499,7 +513,8 @@ E           ::=   E:e1 AND E:e2{:
                 | MENOS E:ea{:
                     RESULT = new Nodo(ConsCJS.EA);
                     Nodo n = new Nodo(ConsCJS.MENOS);
-                    RESULT.addHijo(n,ea);
+                    n.addHijo(ea);
+                    RESULT.addHijo(n);
                 :}
                 | N:n {:
                     RESULT = n;

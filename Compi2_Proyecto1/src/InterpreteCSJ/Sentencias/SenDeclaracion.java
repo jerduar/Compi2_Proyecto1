@@ -56,14 +56,16 @@ public class SenDeclaracion extends Sentencia {
         Lista.getHijos().forEach((arreglo) -> {
             String id = arreglo.getHijo(0).getLexema();
             Result tamanio = new Expresion(arreglo.getHijo(1), t).ResolverExpresion();
-            //System.out.println("tamanio : " + tamanio.getTipo() + " " + tamanio.getValor());
+            System.out.println("tamanio : " + tamanio.getTipo() + " " + tamanio.getValor());
             if (!Objects.equals(tamanio.getTipo(), ConsJS.NUM)) {
                 //ERROR
                 System.out.println("Debe ser una expresión Numérica " + tamanio.getValor());
 
             } else {
                 try {
-                    Integer tam = Integer.parseInt(tamanio.getValor());
+                    Double tam1 = Double.parseDouble(tamanio.getValor());
+                    Integer tam = tam1.intValue();
+                    
                     if (tam < 1) {
                         //ERROR
                         System.out.println("Debe ser un número mayor que 0");
