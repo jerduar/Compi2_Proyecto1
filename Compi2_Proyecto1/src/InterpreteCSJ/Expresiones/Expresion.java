@@ -47,6 +47,8 @@ public class Expresion {
             return ResolverAritmetica(raiz.getHijo(0));
         } else if (raiz.getCod() == ConsCJS.ER) {
             return ResolverRelacional(raiz.getHijo(0));
+        } else if (raiz.getCod() == ConsCJS.EL) {
+            //return ResolverLogica(raiz.getHijo(0));
         }
         r = ResolverHoja(raiz);
         //System.out.println("tipo " + r.getTipo() + " valor " + r.getValor());
@@ -113,7 +115,8 @@ public class Expresion {
             return r;
         }
 
-        if (Auxiliar.esDateoDT(izq.getTipo()) || Auxiliar.esDateoDT(der.getTipo())) {
+        //SI LOS DOS SON FECHAS ESTAN MAL
+        if (Auxiliar.esDateoDT(izq.getTipo()) && Auxiliar.esDateoDT(der.getTipo())) {
             ManErr.InsertarError("", "Semantico", 0, 0, "No se pueden operar fechas");
             return r;
         }
@@ -122,6 +125,12 @@ public class Expresion {
         if (op.getCod() == ConsCJS.MAS) {
             return ExpArit.Suma(izq, der);
         }
+
+        if (Auxiliar.esDateoDT(izq.getTipo()) || Auxiliar.esDateoDT(der.getTipo())) {
+            ManErr.InsertarError("", "Semantico", 0, 0, "No se pueden operar fechas");
+            return r;
+        }
+
         //SIGNO MENOS
         if (op.getCod() == ConsCJS.MENOS) {
             if (Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL) && Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)) {
@@ -191,10 +200,47 @@ public class Expresion {
             ManErr.InsertarError("", "Semantico", 0, 0, "Solo se pueden comparar bool con bool o numericos");
             return respuesta;
         }
-        
+
         if (op.getCod() == ConsCJS.IGUAL) {
-            
+
             return ExpRel.Igual_Igual(izq, der);
+        }
+
+        if (op.getCod() == ConsCJS.MENORQUE) {
+            return ExpRel.menorque(izq, der);
+        }
+
+        if (op.getCod() == ConsCJS.MAYORQUE) {
+            return ExpRel.mayorque(izq, der);
+        }
+
+        if (op.getCod() == ConsCJS.MENORIGUALQUE) {
+            return ExpRel.menorigualque(izq, der);
+        }
+
+        if (op.getCod() == ConsCJS.MAYORIGUALQUE) {
+            return ExpRel.mayorigualque(izq, der);
+        }
+
+        return respuesta;
+    }
+
+    private Result ResolverLogica(Nodo op) {
+        Result respuesta = new Result();
+        Result izq, der;
+
+        izq = ResolverExpresion(op.getHijo(0));
+        if (Auxiliar.esError(izq.getTipo()) || izq.getValor() == null) {
+            ManErr.InsertarError("", "Semantico", 0, 0, "Hay un problema con el operador izquierdo, no se puede operar");
+            return respuesta;
+        }
+        if (Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)) {
+            ManErr.InsertarError("", "Semantico", 0, 0, "El operador debe ser de tipo booleano");
+            return respuesta;
+        }
+
+        if (op.getCod() == ConsCJS.NOT) {
+            //return ExpLog.negacion(izq);
         }
 
         return respuesta;
@@ -209,14 +255,12 @@ public class Expresion {
                 || hoja.getCod() == ConsJS.BOOL) {
 
             resultado.setTipo(hoja.getCod());
-            //System.out.println("es hoja " + hoja.getLexema() + " " + hoja.getCod() + " " + ConsJS.NUM);
             resultado.setValor(hoja.getLexema());
-            //System.out.println("es resultado " + resultado.getValor() + " " + resultado.getTipo() + " " + ConsJS.NUM);
             return resultado;
         }
 
         if (hoja.getCod() == ConsJS.ID) {
-
+            System.out.println("Encontre un ID :P");
         }
 
         return resultado;

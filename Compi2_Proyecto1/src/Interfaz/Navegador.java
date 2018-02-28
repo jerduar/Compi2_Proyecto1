@@ -19,6 +19,11 @@ public class Navegador extends javax.swing.JFrame {
      */
     public Navegador() {
         initComponents();
+        Pestania n = new Pestania();
+        n.setVisible(true);
+        this.add(n);
+        
+        this.jTabbedPane1.addTab("Pestaña 1", n);
         
     }
     
@@ -53,7 +58,7 @@ public class Navegador extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
         );
 
         pack();

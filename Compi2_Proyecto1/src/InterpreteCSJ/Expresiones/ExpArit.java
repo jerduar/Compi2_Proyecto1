@@ -279,52 +279,52 @@ public class ExpArit {
     public static Result modulo(Result izq, Result der) {
         Result respuesta = new Result();
 
-        if(Auxiliar.esTipo(izq.getTipo(), ConsJS.NUM)){
+        if (Auxiliar.esTipo(izq.getTipo(), ConsJS.NUM)) {
             Double op1 = Auxiliar.ToNum(izq.getValor());
             //NUM % NUM
-            if(Auxiliar.esTipo(der.getTipo(), ConsJS.NUM)){
+            if (Auxiliar.esTipo(der.getTipo(), ConsJS.NUM)) {
                 op1 = op1 % Auxiliar.ToNum(der.getValor());
                 respuesta.setValor(op1 + "");
                 respuesta.setTipo(izq.getTipo());
                 return respuesta;
             }
             //NUM % BOOL
-            if(Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)){
+            if (Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)) {
                 op1 = op1 % Auxiliar.BoolToNum(der.getValor());
                 respuesta.setValor(op1 + "");
                 respuesta.setTipo(izq.getTipo());
                 return respuesta;
             }
         }
-        
-        if(Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)){
+
+        if (Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)) {
             Double op1 = Auxiliar.BoolToNum(izq.getValor());
             //BOOL % NUM
-            if(Auxiliar.esTipo(der.getTipo(), ConsJS.NUM)){
+            if (Auxiliar.esTipo(der.getTipo(), ConsJS.NUM)) {
                 op1 = op1 % Auxiliar.ToNum(der.getValor());
                 respuesta.setValor(op1 + "");
                 respuesta.setTipo(der.getTipo());
                 return respuesta;
             }
-            
-            if(Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)){
+
+            if (Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)) {
                 op1 = op1 % Auxiliar.BoolToNum(der.getValor());
                 respuesta.setValor(op1 + "");
                 respuesta.setTipo(ConsJS.NUM);
                 return respuesta;
             }
         }
-        
+
         return respuesta;
     }
-    
-    public static Result menosE(Result num){
+
+    public static Result menosE(Result num) {
         Result respuesta = new Result();
-        
+
         Double res = -1 * Auxiliar.ToNum(num.getValor());
-        respuesta.setValor(res+"");
+        respuesta.setValor(res + "");
         respuesta.setTipo(num.getTipo());
-        
+
         return respuesta;
     }
 }

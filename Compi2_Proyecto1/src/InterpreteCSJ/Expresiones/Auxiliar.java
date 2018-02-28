@@ -69,6 +69,17 @@ public class Auxiliar {
             return null;
         }
     }
+    
+    public static Date toDate(String date){
+        try {
+            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+            df.setLenient(false);
+            Date result = df.parse(date);
+            return result;
+        } catch (ParseException pe) {
+            return null;
+        }
+    }
 
     public static boolean esDateoDT(Integer valor) {
         return esTipo(valor, ConsJS.FECHA) || esTipo(valor, ConsJS.FECHA_HORA);
