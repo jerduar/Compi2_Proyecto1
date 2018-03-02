@@ -7,6 +7,8 @@ package Interfaz;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ComponentListener;
+import javax.swing.JButton;
 
 /**
  *
@@ -14,17 +16,32 @@ import java.awt.Toolkit;
  */
 public class Navegador extends javax.swing.JFrame {
 
+    
+    private static boolean allowinstance;
+    private static Navegador instancia;
+    
     /**
      * Creates new form Navegador
      */
-    public Navegador() {
+    private Navegador() {
         initComponents();
-        Pestania n = new Pestania();
-        n.setVisible(true);
-        this.add(n);
-        
-        this.jTabbedPane1.addTab("Pestaña 1", n);
-        
+        if(!allowinstance){
+            System.err.println("Use getinstance() con el navegador");
+        }else{
+            System.out.println("Se instancia una vez el navedor");
+        }
+    }
+    
+    public static Navegador getNavegador(){
+        if(instancia == null){
+            allowinstance = true;
+            Navegador nav = new Navegador();
+            nav.setVisible(true);
+            allowinstance = false;
+            return nav;
+        }else{
+            return instancia;
+        }
     }
     
     @Override
@@ -34,6 +51,10 @@ public class Navegador extends javax.swing.JFrame {
 
 
         return retValue;
+    }
+    
+    private void InsertarTab(String nombre){
+        this.jTabbedPane1.insertTab(nombre,null,new Pestania(),null,this.jTabbedPane1.getComponentCount());
     }
 
     /**
@@ -46,23 +67,42 @@ public class Navegador extends javax.swing.JFrame {
     private void initComponents() {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setIconImage(getIconImage());
+
+        jButton1.setText("Nueva Pestaña");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1248, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 1103, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 630, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 598, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        //AGREGAR UNA NUEVA PESÑA
+        this.InsertarTab("Nueva pestaña");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -100,6 +140,7 @@ public class Navegador extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JTabbedPane jTabbedPane1;
     // End of variables declaration//GEN-END:variables
 }

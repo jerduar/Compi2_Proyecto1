@@ -1,451 +1,506 @@
-
 package GeneradorCHTML;
 
-import AST.Nodo;
 import java_cup.runtime.Symbol;
+import javax.swing.JOptionPane;
+import AST.Nodo;
 
+//PARSER PARA EL ARCHIVO DE ESCENARIOS
 parser code
-{:  
-    
+{://Codigo visible
+
+    /* Metodo para errores sintacticos*/
+	
     public void syntax_error(Symbol s){
-        System.err.println("Error " + s.value + " " + s.left);
+        System.err.println("Error " + s.value + " " + s.left + " " + s.right);
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
         System.err.println("Hubo un error en análisis irrecuperable :(");
+        //System.err.println(s);
     }
 
 :}
 
-
 action code
-{:
+{://Codigo de acciones
+    
+:}
 
-:}  
+//terminal t_fin;
+terminal String identificador, numero, texto, cadena;
+terminal String menor, mayor, pqa, pqc, pyc, igual, coma;
+terminal String t_chtml, t_fin_chtml, t_encabezado, t_fin_encabezado, t_cjs, t_fin_cjs;
+terminal String t_titulo, t_fin_titulo, t_cuerpo, t_fin_cuerpo, t_panel, t_fin_panel;
+terminal String t_texto, t_fin_texto, t_caja_texto, t_fin_caja_texto, t_imagen, t_fin_imagen;
+terminal String t_boton, t_fin_boton, t_enlace, t_fin_enlace, t_tabla, t_fin_tabla;
+terminal String t_fil_t, t_fin_fil_t, t_cb, t_fin_cb, t_ct, t_fin_ct, t_texto_a, t_fin_texto_a;
+terminal String t_caja, t_fin_caja, t_opcion, t_fin_opcion, t_spinner, t_fin_spinner, t_salto_fin;
 
+terminal String t_click, t_ruta, t_id, t_grupo, t_alto, t_ancho, t_alineado, t_fondo, t_ccss, t_fin_ccss, t_valor;
 
-terminal PUNTO_COMA, MENOR, MAYOR, IGUAL;
-terminal chtml, encabezado, cjs, ccss, titulo, cuerpo, panel, texto_t,fondo;
-terminal caja_texto, imagen, boton, enlace, tabla, fil_t, cb, ct, valor;
-terminal texto_a, caja, opcion, spinner, salto, click, ruta, id;
-terminal grupo, alto, ancho, alineado;
-terminal finchtml, finencabezado, fincjs, finccss, fintitulo, fincuerpo, finpanel, fintexto;
-terminal fincaja_texto, finimagen, finboton, finenlace, fintabla, finfil_t, fincb, finct;
-terminal fintexto_a, fincaja, finopcion, finspinner;
-
-terminal String NUM, ID, CAD,CAD2;
-
-non terminal Nodo INICIO, H , CONT_EN, CONT_C, REP, CU, L_AT, L_AT2, L_ATRIBUTOS, L_ATRIBUTOS2;
-non terminal Nodo CU_FIL, CU_T, CONT_FIL,CUERPO,CONT,ENCABEZADO, NUEVO, CAJA_OP,CONT_COL;
-non terminal Nodo E,CUERPO_TABLA;
-
+non terminal Nodo INICIO, CHTML, L_PROPIEDADES, PROPIEDAD, CONTENIDO, ENCABEZADO, CUERPO, L_ETQS_ENC, ETQ_ENC, L_ETQS_CUERPO, ETQ_CUERPO, L_ETQS_CAJA, ETQ_CAJA, L_ETQS_TABLA, ETQ_TABLA, L_ETQS_FIlA, ETQ_FILA, TEXTO;
 
 start with INICIO;
 
-INICIO          ::= H:val{:
-        
+INICIO          ::= CHTML:c
+                {:
+                    RESULT = c;
                 :}
 ;
 
-H               ::= MENOR chtml MAYOR CONT:val MENOR finchtml MAYOR {:
-                
+CHTML           ::= menor t_chtml mayor CONTENIDO:c menor t_fin_chtml mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CHTML);
+                    RESULT.addHijo(c);
+                :}
+                |   menor t_chtml TEXTO:t t_fin_chtml mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CHTML);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_chtml L_PROPIEDADES:p mayor CONTENIDO:c menor t_fin_chtml mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CHTML);
+                    RESULT.addHijo(p,c);
+                :}
+                |   menor t_chtml L_PROPIEDADES:p TEXTO:t t_fin_chtml mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CHTML);
+                    RESULT.addHijo(p,t);
                 :}
 ;
 
-CONT            ::= ENCABEZADO:val CUERPO:cuerpo{:
-         
-        
+L_PROPIEDADES   ::= L_PROPIEDADES:lp PROPIEDAD:p
+                {:
+                    RESULT = lp;
+                    RESULT.addHijo(p);
                 :}
-;
-    
-
-ENCABEZADO      ::= MENOR encabezado MAYOR CONT_EN:val MENOR finencabezado MAYOR{:
-            
-        
-                :}
-;
-    
-CUERPO          ::= MENOR cuerpo MAYOR CONT_C:val MENOR fincuerpo MAYOR {:
-        
-        
-                :}
-                | MENOR cuerpo fondo IGUAL E:val2 PUNTO_COMA MAYOR CONT_C:val  MENOR fincuerpo MAYOR {:
-                
+                |   PROPIEDAD:p
+                {:
+                    RESULT = new Nodo(ConsCH.PROPIEDADES);
+                    RESULT.addHijo(p);
                 :}
 ;
 
-CONT_EN         ::= CONT_EN:val REP:nuevo{:
-        
-        
+PROPIEDAD       ::= t_click igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.CLICK);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
                 :}
+                |   t_id igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.FONDO);
+                    RESULT.addHijo(ConsCH.ID,cad,cadleft,cadright);
+                :}
+                |   t_grupo igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.GRUPO);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_alto igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.ALTO);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_ancho igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.ANCHO);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_alineado igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.ALINEADO);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_ruta igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.RUTA);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_valor igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.VALOR);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+                |   t_fondo igual cadena:cad pyc
+                {:
+                    RESULT = new Nodo(ConsCH.FONDO);
+                    RESULT.addHijo(ConsCH.CAD,cad,cadleft,cadright);
+                :}
+;      
 
-                | REP:val{:
-                
+CONTENIDO       ::= ENCABEZADO:e CUERPO:c
+                {:
+                    RESULT = new Nodo(ConsCH.CONTENIDO);
+                    RESULT.addHijo(e,c);
                 :}
 ;
 
-REP             ::= MENOR titulo CAD2:val fintitulo MAYOR {:                
-    
+ENCABEZADO      ::= menor t_encabezado mayor L_ETQS_ENC:lee menor t_fin_encabezado mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TITULO);
+                    RESULT.addHijo(lee);
                 :}
-                | MENOR ccss ruta IGUAL CAD PUNTO_COMA CAD2:val finccss MAYOR {:
-        
-        
+                |   menor t_encabezado TEXTO:t t_fin_encabezado mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TITULO);
+                    RESULT.addHijo(t);
                 :}
-                | MENOR cjs ruta IGUAL CAD PUNTO_COMA CAD2:val fincjs MAYOR {:
-        
-        
-                :}    
-                | MENOR ccss ruta IGUAL CAD PUNTO_COMA MAYOR  MENOR finccss MAYOR {:
-        
+                |   menor t_encabezado L_PROPIEDADES:p mayor L_ETQS_ENC:lee menor t_fin_encabezado mayor
+                {:
+                    RESULT = new Nodo(ConsCH.ENCABEZADO);
+                    RESULT.addHijo(p,lee);
                 :}
-                |MENOR titulo MAYOR  MENOR fintitulo MAYOR {:
-        
-                :}
-                | MENOR cjs ruta IGUAL CAD PUNTO_COMA MAYOR  MENOR fincjs MAYOR {:
-         
-                :}
-;
-
-CONT_C          ::= CONT_C:val CU:valor{:
-        
-        
-                :}
-                | CU:val{:
-        
+                |   menor t_encabezado L_PROPIEDADES:p TEXTO:t t_fin_encabezado mayor
+                {:
+                    RESULT = new Nodo(ConsCH.ENCABEZADO);
+                    RESULT.addHijo(p,t);
                 :}
 ;
 
-CU              ::= MENOR panel L_AT:val PUNTO_COMA MAYOR CONT_C:valor MENOR finpanel MAYOR{:
-        
-        
+CUERPO          ::= menor t_cuerpo mayor L_ETQS_CUERPO:lec menor t_fin_cuerpo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CUERPO);
+                    RESULT.addHijo(lec);
                 :}
-                |MENOR panel MAYOR CONT_C:val MENOR finpanel MAYOR{:
-                
+                |   menor t_cuerpo TEXTO:t t_fin_cuerpo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CUERPO);
+                    RESULT.addHijo(t);
                 :}
-                |MENOR panel L_AT:val PUNTO_COMA MAYOR  MENOR finpanel MAYOR{:
-                
-                :}  
-                |MENOR panel MAYOR  MENOR finpanel MAYOR{:
-        
+                |   menor t_cuerpo L_PROPIEDADES:p mayor L_ETQS_CUERPO:lec menor t_fin_cuerpo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CUERPO);
+                    RESULT.addHijo(p,lec);
                 :}
-                |MENOR texto_t L_AT:val PUNTO_COMA CAD2:id fintexto MAYOR{:
-        
+                |   menor t_cuerpo L_PROPIEDADES:p TEXTO:t t_fin_cuerpo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CUERPO);
+                    RESULT.addHijo(p,t);
                 :}
-                |MENOR texto_t L_AT:val PUNTO_COMA MAYOR MENOR fintexto MAYOR{:
-                
-                :}
-                |MENOR texto_t MAYOR MENOR fintexto MAYOR{:
-        
-                :}
-                |MENOR texto_t CAD2:id fintexto MAYOR{:
-        
-                :}
-                |MENOR caja_texto L_AT:val PUNTO_COMA CAD2:id fincaja_texto MAYOR{:
-        
-                :}
-                |MENOR caja_texto L_AT:val PUNTO_COMA MAYOR MENOR fincaja_texto MAYOR{:
-        
-                :}
-                |MENOR caja_texto CAD2:val fincaja_texto MAYOR{:
-        
-                :}
-                |MENOR caja_texto MAYOR MENOR fincaja_texto MAYOR{:
-        
-                :}
-                |MENOR imagen L_AT2:val PUNTO_COMA CAD2:id finimagen MAYOR{:
-        
-                :}    
-                |MENOR imagen L_AT2:val PUNTO_COMA MAYOR MENOR finimagen MAYOR{:
-        
-                :}
-                |MENOR imagen CAD2:val finimagen MAYOR{:
-        
-                :}
-                |MENOR imagen MAYOR MENOR finimagen MAYOR{:
-        
-                :}
-                |MENOR boton L_AT2:val  PUNTO_COMA CAD2:id finboton MAYOR{:
-        
-                :}
-                |MENOR boton L_AT2:val  PUNTO_COMA MAYOR MENOR finboton MAYOR{:
-        
-                //agregar el nombre por defecto
-                :}
-                |MENOR boton CAD2:val finboton MAYOR{:
-        
-                :}    
-                |MENOR boton MAYOR MENOR finboton MAYOR{:
-        
-                :}
-                |MENOR enlace ruta IGUAL CAD:cad PUNTO_COMA CAD2:val finenlace MAYOR{:
-        
-                :}
-                |MENOR tabla L_AT:val PUNTO_COMA MAYOR CU_T:cont MENOR fintabla MAYOR{:
-                
-                :}
-                |MENOR enlace ruta IGUAL CAD:val PUNTO_COMA MAYOR MENOR finenlace MAYOR{:
-                    
-                //agregar el nombre de la ruta ya que no tiene otro nombre
-                :}
-                |MENOR tabla MAYOR CU_T:val MENOR fintabla MAYOR{:
-                
-                :}
-                |MENOR tabla MAYOR  MENOR fintabla MAYOR{:        
+;        
 
+L_ETQS_ENC      ::= L_ETQS_ENC:l ETQ_ENC:e
+                {:
+                    RESULT = l;
+                    RESULT.addHijo(e);
                 :}
-                |MENOR tabla CAD2:val fintabla MAYOR{:
-                
-
-                :}
-                |MENOR texto_a L_AT:val PUNTO_COMA CAD2:cont fintexto_a MAYOR{:
-
-                :}
-                |MENOR texto_a L_AT:val PUNTO_COMA MAYOR MENOR fintexto_a MAYOR{:
-        
-                :}
-                |MENOR texto_a CAD2:val fintexto_a MAYOR{:
-        
-                :}
-                |MENOR texto_a MAYOR MENOR fintexto_a MAYOR{:
-        
-                :}
-                |MENOR caja L_AT2:val PUNTO_COMA MAYOR CAJA_OP:cont MENOR fincaja MAYOR{:
-        
-                :}
-                |MENOR caja MAYOR CAJA_OP:val MENOR fincaja MAYOR{:
-        
-                :}
-                |MENOR spinner L_AT:val PUNTO_COMA CAD2:n finspinner MAYOR{:
-         
-                :}
-                |MENOR spinner L_AT:val PUNTO_COMA MAYOR MENOR finspinner MAYOR{:
-        
-                :}
-                |MENOR spinner CAD2:n finspinner MAYOR{:
-         
-                :}
-                |MENOR spinner MAYOR  MENOR finspinner MAYOR{:
-         
-                :}
-                |MENOR salto MAYOR {:
-        
+                |   ETQ_ENC:e
+                {:
+                    RESULT = e;
                 :}
 ;
 
-CAJA_OP         ::= CAJA_OP:val NUEVO:otro{:
-            
+ETQ_ENC         ::= menor t_titulo TEXTO:t t_fin_titulo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TITULO);
+                    RESULT.addHijo(t);
                 :}
-                |NUEVO:val {:
-            
+                |   menor t_ccss TEXTO:t t_fin_ccss mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CCSS);
+                    RESULT.addHijo(t);
                 :}
-;
-
-NUEVO           ::= MENOR opcion valor IGUAL E:val PUNTO_COMA MAYOR  MENOR finopcion MAYOR{:
-            
-            
+                |   menor t_cjs TEXTO:t t_fin_cjs mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CJS);
+                    RESULT.addHijo(t);
                 :}
-                |MENOR opcion valor IGUAL E:val PUNTO_COMA CAD2:id finopcion MAYOR{:
-        
+                |   menor t_titulo L_PROPIEDADES:p TEXTO:t t_fin_titulo mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TITULO);
+                    RESULT.addHijo(p,t);
                 :}
-;
-    
-
-L_AT            ::= L_AT:val PUNTO_COMA L_ATRIBUTOS:hijo{:
-         
+                |   menor t_ccss L_PROPIEDADES:p TEXTO:t t_fin_ccss mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CCSS);
+                    RESULT.addHijo(p,t);
                 :}
-                |L_ATRIBUTOS:val {:
-                    
-                :}
-;
-
-L_AT2           ::= L_AT2:val PUNTO_COMA L_ATRIBUTOS2:hijo{:
-            
-                :}
-                |L_ATRIBUTOS2:val {:
-            
+                |   menor t_cjs L_PROPIEDADES:p TEXTO:t t_fin_cjs mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CJS);
+                    RESULT.addHijo(p,t);
                 :}
 ;
 
-L_ATRIBUTOS     ::= click IGUAL E:val {:
-            
+L_ETQS_CUERPO   ::= L_ETQS_CUERPO:lec ETQ_CUERPO:e
+                {:
+                    RESULT = lec;
+                    RESULT.addHijo(e);
                 :}
-
-                | id:id IGUAL:asig E:val {:
-                        
-                :}
-                | grupo:grupo IGUAL:asig E:val {:
-                        
-                :}
-
-                | alto IGUAL E:val {:
-                        
-                :}
-                | ancho:ancho IGUAL:asig E:val {:            
-            
-                :}
-                | alineado:ali IGUAL:asig E:val {:
-            
+                |   ETQ_CUERPO:e
+                {:
+                    RESULT = e;
                 :}
 ;
-            
 
-L_ATRIBUTOS2 ::= click IGUAL E:val {:
-            
-            :}
-
-          
-
-            | ruta:ruta IGUAL:asig E:val {:
-            
-
-            :}
-            | id:id IGUAL:asig E:val {:
-             
-            
-            :}
-
-            | grupo:grupo IGUAL:asig E:val {:
-            
-            
-            :}
-
-
-            | alto IGUAL E:val {:
-            
-            
-            :}
-
-            | ancho:ancho IGUAL:asig E:val {:
-            
-            
-            
-            :}
-
-            | alineado:ali IGUAL:asig E:val {:
-            
-            :}
-;
-            
-CU_T ::= CU_T:val CUERPO_TABLA:cuerpo{:
-        
-        :}
-        
-
-        | CUERPO_TABLA:val{:
-        
-        
-        :}
-;
-
-CUERPO_TABLA ::= MENOR fil_t L_AT:atr PUNTO_COMA MAYOR CU_FIL:val MENOR finfil_t MAYOR {:
-            
-        :}
-
-
-        |MENOR fil_t MAYOR CU_FIL:val MENOR finfil_t MAYOR {:
-            
-        :}
-
-         |MENOR fil_t MAYOR MENOR finfil_t MAYOR {:
-            
-            
-        :} 
-;
-
-CU_FIL ::= CU_FIL:val CONT_FIL:id{:
-            
-        :}
-        
-        |CONT_FIL{:
-        
-        :};
-
-CONT_FIL ::= MENOR cb L_AT:atr PUNTO_COMA MAYOR CONT_COL:cont  MENOR fincb MAYOR{:
-            
-            :}
-
-            |MENOR cb L_AT:atr PUNTO_COMA CAD2:cont fincb MAYOR{:
-            
-            :}
-            
-            |MENOR cb L_AT:atr PUNTO_COMA MAYOR MENOR fincb MAYOR{:
-            
-            :}
-
-            |MENOR cb MAYOR CONT_COL:cont  MENOR fincb MAYOR{:
-            
-            :}
-
-            |MENOR cb CAD2:cont fincb MAYOR{:
-            
-            :}
-
-            |MENOR cb MAYOR  MENOR fincb MAYOR{:
-            
-            
-            :}
-            
-            |MENOR ct MAYOR CONT_COL:cont MENOR finct MAYOR{:
-            
-            :}
-
-            |MENOR ct MAYOR MENOR finct MAYOR{:
-            
-            :}
-
-            |MENOR ct CAD2:cont finct MAYOR{:
-            
-            :}            
-            |MENOR ct L_AT:atr PUNTO_COMA CAD2:cont finct MAYOR{:
-            
-            :}
-
-            |MENOR ct L_AT:atr PUNTO_COMA MAYOR MENOR finct MAYOR{:
-            
-            :}
-            
-            |MENOR ct L_AT:atr PUNTO_COMA MAYOR CONT_COL:cont MENOR finct MAYOR{:
-            
-            :}
-;
-
-CONT_COL    ::= MENOR imagen L_AT2:val PUNTO_COMA CAD2:id finimagen MAYOR{:
-        
-        
-            :}
-            |MENOR imagen L_AT2:val PUNTO_COMA MAYOR MENOR finimagen MAYOR{:
-        
-            :}
-            |MENOR imagen CAD2:val finimagen MAYOR{:
-           
-            :}
-            |MENOR imagen MAYOR MENOR finimagen MAYOR{:
-        
-        //agregar la imagen de no se encontro imagen      
-            :}
-            |MENOR boton L_AT2:val  PUNTO_COMA CAD2:id finboton MAYOR{:
-              
-            :}
-            |MENOR boton L_AT2:val  PUNTO_COMA MAYOR MENOR finboton MAYOR{:
-                
-            :}
-            |MENOR boton CAD2:val finboton MAYOR{:
-        
-            :}    
-            |MENOR boton MAYOR MENOR finboton MAYOR{:
-   
-            :}
-;
-        
-E           ::= CAD:cad 
-            {: 
-    
-            :}
-            | NUM:num{:
-
-            :}   
-            | ID:id {:
-        
-            :}
+ETQ_CUERPO      ::= menor t_panel L_PROPIEDADES:p mayor L_ETQS_CUERPO:lec menor t_fin_panel mayor
+                {:
+                    RESULT = new Nodo(ConsCH.PANEL);
+                    RESULT.addHijo(p,lec);
+                :}
+                |   menor t_panel L_PROPIEDADES:p TEXTO:t t_fin_panel mayor
+                {:
+                    RESULT = new Nodo(ConsCH.PANEL);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_panel mayor L_ETQS_CUERPO:lec menor t_fin_panel mayor
+                {:
+                    RESULT = new Nodo(ConsCH.PANEL);
+                    RESULT.addHijo(lec);
+                :}
+                |   menor t_panel TEXTO:t t_fin_panel mayor
+                {:
+                    RESULT = new Nodo(ConsCH.PANEL);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_texto L_PROPIEDADES:p TEXTO:t t_fin_texto mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_texto TEXTO:t t_fin_texto mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_texto_a L_PROPIEDADES:p TEXTO:t t_fin_texto_a mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO_A);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_texto_a TEXTO:t t_fin_texto_a mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO_A);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_caja_texto L_PROPIEDADES:p TEXTO:t t_fin_caja_texto mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA_TEXTO);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_caja_texto TEXTO:t t_fin_caja_texto mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA_TEXTO);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_imagen L_PROPIEDADES:p TEXTO:t t_fin_imagen mayor
+                {:
+                    RESULT = new Nodo(ConsCH.IMAGEN);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_imagen TEXTO:t t_fin_imagen mayor
+                {:
+                    RESULT = new Nodo(ConsCH.IMAGEN);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_boton L_PROPIEDADES:p TEXTO:t t_fin_boton mayor
+                {:
+                    RESULT = new Nodo(ConsCH.BOTON);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_boton TEXTO:t t_fin_boton mayor
+                {:
+                    RESULT = new Nodo(ConsCH.BOTON);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_enlace L_PROPIEDADES:p TEXTO:t t_fin_enlace mayor
+                {:
+                    RESULT = new Nodo(ConsCH.ENLACE);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_enlace TEXTO:t t_fin_enlace mayor
+                {:
+                    RESULT = new Nodo(ConsCH.ENLACE);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_spinner L_PROPIEDADES:p TEXTO:t t_fin_spinner mayor
+                {:
+                    RESULT = new Nodo(ConsCH.SPINNER);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_spinner TEXTO:t t_fin_spinner mayor
+                {:
+                    RESULT = new Nodo(ConsCH.SPINNER);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_caja L_PROPIEDADES:p mayor L_ETQS_CAJA:lec menor t_fin_caja mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA);
+                    RESULT.addHijo(p,lec);
+                :}
+                |   menor t_caja L_PROPIEDADES:p TEXTO:t t_fin_caja mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_caja mayor L_ETQS_CAJA:lec menor t_fin_caja mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA);
+                    RESULT.addHijo(lec);
+                :}
+                |   menor t_caja TEXTO:t t_fin_caja mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CAJA);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_tabla L_PROPIEDADES:p mayor L_ETQS_TABLA:let menor t_fin_tabla mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TABLA);
+                    RESULT.addHijo(p,let);
+                :}
+                |   menor t_tabla L_PROPIEDADES:p TEXTO:t t_fin_tabla mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TABLA);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_tabla mayor L_ETQS_TABLA:let menor t_fin_tabla mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TABLA);
+                    RESULT.addHijo(let);
+                :}
+                |   menor t_tabla TEXTO:t t_fin_tabla mayor
+                {:
+                    RESULT = new Nodo(ConsCH.TABLA);
+                    RESULT.addHijo(t);
+                :}
+                |   menor t_salto_fin mayor
+                {:
+                    RESULT = new Nodo(ConsCH.SALTO_FIN);
+                :}
 ;
 
+L_ETQS_CAJA     ::= L_ETQS_CAJA:l ETQ_CAJA:e
+                {:
+                    RESULT = l;
+                    RESULT.addHijo(e);
+                :}
+                |   ETQ_CAJA:e
+                {:
+                    RESULT = new Nodo(ConsCH.OPCIONES);
+                    RESULT.addHijo(e);
+                :}
+;
+
+ETQ_CAJA        ::= menor t_opcion L_PROPIEDADES:p TEXTO:t t_fin_opcion mayor
+                {:
+                    RESULT = new Nodo(ConsCH.OPCION);
+                    RESULT.addHijo(p,t);
+                                /*Nodo padre = new Nodo("OPCIÓN");
+                                padre.addHijos(propiedades, texto);
+                                RESULT = padre;*/ 
+                :}
+                |   menor t_opcion TEXTO:t t_fin_opcion mayor
+                {:
+                    RESULT = new Nodo(ConsCH.OPCION);
+                    RESULT.addHijo(t);
+                                /*Nodo padre = new Nodo("OPCIÓN");
+                                padre.addHijos(texto);
+                                RESULT = padre;*/
+                 :}
+;
+
+L_ETQS_TABLA    ::= L_ETQS_TABLA:l ETQ_TABLA:e
+                {:
+                    RESULT = l;
+                    RESULT.addHijo(e);
+                                /*Nodo padre = lista;
+                                padre.addHijos(etiqueta);
+                                RESULT = padre;*/
+                :}
+                |   ETQ_TABLA:e
+                {:
+                    RESULT = e;
+                                //RESULT = etiqueta;
+                :}
+;
+
+ETQ_TABLA       ::= menor t_fil_t L_PROPIEDADES:p mayor L_ETQS_FIlA:lef menor t_fin_fil_t mayor
+                {:
+                    RESULT = new Nodo(ConsCH.FIL_T);
+                    RESULT.addHijo(p,lef);
+                                /*Nodo padre = new Nodo("FIL_T");
+                                padre.addHijos(propiedades, contenido);
+                                RESULT = padre;*/
+                :}
+                |   menor t_fil_t L_PROPIEDADES:p TEXTO:t t_fin_fil_t mayor
+                {:
+                    RESULT = new Nodo(ConsCH.FIL_T);
+                    RESULT.addHijo(p,t);
+                :}
+                |   menor t_fil_t mayor L_ETQS_FIlA:lef menor t_fin_fil_t mayor
+                {:
+                    RESULT = new Nodo(ConsCH.FIL_T);
+                    RESULT.addHijo(lef);
+                :}
+                |   menor t_fil_t TEXTO:t t_fin_fil_t mayor
+                {:
+                    RESULT = new Nodo(ConsCH.FIL_T);
+                    RESULT.addHijo(t);
+                :}
+;
+
+L_ETQS_FIlA     ::= L_ETQS_FIlA:l ETQ_FILA:e
+                {:
+                    RESULT = l;
+                    RESULT.addHijo(e);
+                :}
+                |   ETQ_FILA:e
+                {:
+                    RESULT = e;
+                :}
+;
+
+ETQ_FILA        ::= menor t_cb L_PROPIEDADES:p mayor L_ETQS_CUERPO:lec menor t_fin_cb mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CB);
+                    RESULT.addHijo(p,lec);
+                :}
+                |   menor t_cb L_PROPIEDADES:p TEXTO:txt t_fin_cb mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CB);
+                    RESULT.addHijo(p,txt);
+                :}
+                |   menor t_cb mayor L_ETQS_CUERPO:lec menor t_fin_cb mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CB);
+                    RESULT.addHijo(lec);
+                :}
+                |   menor t_cb TEXTO:txt t_fin_cb mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CB);
+                    RESULT.addHijo(txt);
+                :}
+                |   menor t_ct L_PROPIEDADES:p mayor L_ETQS_CUERPO:c menor t_fin_ct mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CT);
+                    RESULT.addHijo(p,c);
+                :}
+                |   menor t_ct L_PROPIEDADES:p TEXTO:txt t_fin_ct mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CT);
+                    RESULT.addHijo(p,txt);
+                :}
+                |   menor t_ct mayor L_ETQS_CUERPO:lec menor t_fin_ct mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CT);
+                    RESULT.addHijo(lec);
+                :}
+                |   menor t_ct TEXTO:txt t_fin_ct mayor
+                {:
+                    RESULT = new Nodo(ConsCH.CT);
+                    RESULT.addHijo(txt);
+                :}
+;
+
+TEXTO           ::= texto:txt
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO);
+                    RESULT.addHijo(new Nodo(ConsCH.TXT,txt,txtleft,txtright));
+                :}
+                |   mayor menor
+                {:
+                    RESULT = new Nodo(ConsCH.TEXTO);
+                    RESULT.addHijo(ConsCH.VACIO,"",-4,-4);
+                :}
+;

@@ -6,6 +6,7 @@
 package AST;
 
 import GeneradorCCSS.ConsCSS;
+import GeneradorCHTML.ConsCH;
 import GeneradorCJS.ConsCJS;
 import java.io.File;
 import java.io.FileWriter;
@@ -31,6 +32,13 @@ public class Nodo {
         this.fila = fila + 1;
         this.columna = Columna + 1;
         
+    }
+    
+    public Nodo(Integer cod, String valor){
+        this.cod = cod;
+        this.lexema = valor;
+        this.fila = -2;
+        this.columna = -2;
     }
     
     public Nodo(Integer cod){
@@ -86,7 +94,7 @@ public class Nodo {
                 VisitarCSS(this);
                 break;
             case 3:
-                //VisitarCHTML(this);
+                VisitarCHTML(this);
                 break;
             default:
                 System.out.println("No se envio paramétro valido para el dibujo del arbol");
@@ -96,6 +104,7 @@ public class Nodo {
     }
 
     private String VisitarCJS(Nodo e) {
+        
         String id_padre = "Nodo" + contador;
         contador++;
         cadena_dot += id_padre + "[label=\"" + ConsCJS.RetornStringCSJ(e.cod) + " " + e.lexema + "\"];\n";
@@ -117,6 +126,21 @@ public class Nodo {
         for (Nodo hijo : e.getHijos()) {
             if (hijo != null) {
                 String cad = id_padre + "->" + VisitarCSS(hijo) + ";\n";
+                cadena_dot += cad;
+            }
+
+        }
+
+        return id_padre;
+    }
+    
+    private String VisitarCHTML(Nodo e){
+        String id_padre = "Nodo" + contador;
+        contador++;
+        cadena_dot += id_padre + "[label=\"" + ConsCH.RetornStringCH(e.cod) + " " + e.lexema + "\"];\n";
+        for (Nodo hijo : e.getHijos()) {
+            if (hijo != null) {
+                String cad = id_padre + "->" + VisitarCHTML(hijo) + ";\n";
                 cadena_dot += cad;
             }
 

@@ -1,0 +1,56 @@
+<//- Inicio CHTML -//>
+<CHTML>
+<//- Contenido encabezado -//>
+<ENCABEZADO>
+<//- Estilo de la intefaz grafica de la página web -//>
+<CCSS ruta="C:\proyecto1\archivo_entrada_estilo.ccss";><FIN-CCSS>
+<CJS ruta="C:\proyecto1\archivo_entrada_estilo.cjs";><FIN-CJS>
+<TITULO>--PAGINA estoy probando%29837 **+ -/ <FIN-TITULO>
+<FIN-ENCABEZADO>
+
+<CUERPO>
+<PANEL id = "panel_1"; grupo= "panel_redireccion";>
+<BOTON grupo = "boton_redireccion"; alto = "35"; ancho = "100"; ruta= "C:\proyecto1\index.chtml";> Principal <FIN-BOTON>
+
+<FIN-PANEL>
+<PANEL id = "panel_2"; grupo="titulo"; ancho = "716"; alto = "50";>
+<//- esta linea contiene salto de linea en el texto -//>
+<TEXTO id="titulo_doc"; grupo= "titulo";>Calificacion Compiladores 
+Proyecto<FIN-TEXTO>
+<FIN-PANEL>
+<//- Se agregaron tres saltos de linea -//>
+<SALTO-FIN>
+<SALTO-FIN>
+<SALTO-FIN>
+
+<TABLA>
+<FIL_T>
+<CB>Nombre<FIN-CB>
+<CB>Apellido<FIN-CB>
+<CB> <IMAGEN ruta="c://fichero/hoja.chtml";> rutade  <FIN-IMAGEN> <FIN-CB>
+<FIN-FIL_T>
+<FIL_T>
+<CT>Mack<FIN-CT>
+<CT>Hill<FIN-CT>
+<CT>15<FIN-CT>
+<FIN-FIL_T>
+<FIL_T>
+<CT>Stark<FIN-CT>
+<CT>Iron<FIN-CT>
+<CT>50<FIN-CT>
+<FIN-FIL_T>
+<FIN-TABLA>
+
+<CAJA id="caja_1"; grupo="formulario_2";>
+<OPCION valor= "promedio"; >Promedio<FIN-OPCION>
+<OPCION valor= "suma"; >Suma<FIN-OPCION>
+<OPCION valor= "resta"; >Resta<FIN-OPCION>
+<OPCION valor= "multiplicar"; >Multiplicacion<FIN-OPCION>
+<OPCION valor= "7"; >ModuloP1<FIN-OPCION>
+<OPCION valor= "11"; >ModulP2<FIN-OPCION>
+<FIN-CAJA>
+
+<BOTON click="operacion_datos()"; alto= "30"; ancho ="210"; id="boto_cal"; grupo="formulario_2";> Calcular <FIN-BOTON>
+
+<FIN-CUERPO>
+<FIN-CHTML>
