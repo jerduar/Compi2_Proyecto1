@@ -5,6 +5,7 @@
  */
 package InterpreteCSJ.Recolector;
 
+import InterpreteCSJ.Expresiones.Result;
 import java.util.Hashtable;
 
 /**
@@ -29,16 +30,37 @@ public class TablaSymCSJ {
         this.nivel = nivel;
     }
     
+    public TablaSymCSJ crearTablaHijo(){
+        if(this.hijo == null){
+            hijo = new TablaSymCSJ(this.nivel+1);
+            hijo.padre = this;
+            return hijo;
+        }else{
+            return hijo;
+        }
+    }
+    
     public Boolean InsertarSimJS(SimJS sim){
         
         Integer key = GenerarKey(sim.getNombre(),sim.getRol(),sim.getNo_param());
         
         if(!ExisteSimJS(key)){
+            sim.setKey(key);
             this.tabla.put(key, sim);
             return true;
         }
         
         return false;
+    }
+    
+    public void SetVar(SimJS var, Result valor){
+        SimJS a = this.BuscarVariable(var.getNombre());
+        if(a != null){
+           a.setValor(valor); 
+        }else{
+            System.out.println("No se encontro la variable para setear");
+        }
+        
     }
     
     public Boolean ExisteSimJS(Integer key){
@@ -61,7 +83,23 @@ public class TablaSymCSJ {
         return key + rol + num_param;
     }
     
-    public void MostrarTabla(){
+    public SimJS BuscarVariable(String nombre){
+        Integer key = this.GenerarKey(nombre, ConsJS.variable, 0);
         
+        return SacarSimbolo(key);
+    }
+    
+    
+    public SimJS SacarSimbolo(Integer key){
+        SimJS var = this.tabla.get(key);
+        if(var != null){
+            return var;
+        }else{
+            if(this.padre != null){
+                return this.padre.SacarSimbolo(key);
+            }else{
+                return null;
+            }
+        }
     }
 }

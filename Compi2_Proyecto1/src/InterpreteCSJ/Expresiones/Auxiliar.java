@@ -86,11 +86,15 @@ public class Auxiliar {
     }
 
     public static boolean toBool(String val) {
-        return Boolean.parseBoolean(val);
+        return val.equals("1");
+    }
+    
+    public static String BoolToStr(boolean val){
+        return (val) ? "1" : "0";
     }
 
     public static Double BoolToNum(String bool) {
-        if (Boolean.parseBoolean(bool)) {
+        if (bool.equals("1")) {
             return 1.0;
         } else {
             return 0.0;

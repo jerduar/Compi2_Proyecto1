@@ -9,7 +9,9 @@ import AST.Nodo;
 import GeneradorCJS.ConsCJS;
 import InterpreteCSJ.Recolector.ConsJS;
 import InterpreteCSJ.Recolector.ManErr;
+import InterpreteCSJ.Recolector.SimJS;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
+import InterpreteCSJ.Sentencias.SenAtexto;
 import java.util.Objects;
 
 /**
@@ -48,7 +50,7 @@ public class Expresion {
         } else if (raiz.getCod() == ConsCJS.ER) {
             return ResolverRelacional(raiz.getHijo(0));
         } else if (raiz.getCod() == ConsCJS.EL) {
-            //return ResolverLogica(raiz.getHijo(0));
+            return ResolverLogica(raiz.getHijo(0));
         }
         r = ResolverHoja(raiz);
         //System.out.println("tipo " + r.getTipo() + " valor " + r.getValor());
@@ -231,16 +233,36 @@ public class Expresion {
 
         izq = ResolverExpresion(op.getHijo(0));
         if (Auxiliar.esError(izq.getTipo()) || izq.getValor() == null) {
-            ManErr.InsertarError("", "Semantico", 0, 0, "Hay un problema con el operador izquierdo, no se puede operar");
+            ManErr.InsertarError("", "Semantico", op.getFila(), op.getColumna(), "Hay un problema con el operador izquierdo, no se puede operar");
             return respuesta;
         }
-        if (Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)) {
-            ManErr.InsertarError("", "Semantico", 0, 0, "El operador debe ser de tipo booleano");
+        if (!Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)) {
+            ManErr.InsertarError("", "Semantico", op.getFila(), op.getColumna(), "El operador debe ser de tipo booleano");
             return respuesta;
         }
 
         if (op.getCod() == ConsCJS.NOT) {
-            //return ExpLog.negacion(izq);
+            return ExpLog.negacion(izq);
+        }
+
+        der = ResolverExpresion(op.getHijo(1));
+
+        if (Auxiliar.esError(der.getTipo()) || der.getValor() == null) {
+            ManErr.InsertarError("", "Semantico", op.getFila(), op.getColumna(), "Hay un problema con el operador izquierdo, no se puede operar");
+            return respuesta;
+        }
+
+        if (!Auxiliar.esTipo(der.getTipo(), ConsJS.BOOL)) {
+            ManErr.InsertarError("", "Semantico", op.getFila(), op.getColumna(), "El operador debe ser de tipo booleano");
+            return respuesta;
+        }
+
+        if (op.getCod() == ConsCJS.AND) {
+            return ExpLog.and(der, izq);
+        }
+
+        if (op.getCod() == ConsCJS.OR) {
+            return ExpLog.or(izq, der);
         }
 
         return respuesta;
@@ -253,17 +275,48 @@ public class Expresion {
                 || hoja.getCod() == ConsJS.FECHA
                 || hoja.getCod() == ConsJS.FECHA_HORA
                 || hoja.getCod() == ConsJS.BOOL) {
-
             resultado.setTipo(hoja.getCod());
             resultado.setValor(hoja.getLexema());
             return resultado;
         }
 
         if (hoja.getCod() == ConsJS.ID) {
-            System.out.println("Encontre un ID :P");
+            return this.getVar(hoja.getLexema());
+        }
+        
+        if(hoja.getCod() == ConsCJS.ATEXTO || hoja.getCod() == ConsCJS.ATEXTO2){
+            System.out.println(hoja.getHijo(0).getLexema());
+            resultado = new SenAtexto(hoja).Ejecutar(ctx);
         }
 
         return resultado;
+    }
+    
+    /*private Result getATexto(Nodo n){
+        Result respuesta = new Result();
+        
+        SimJS vector = this.ctx.BuscarVariable(n.get)
+        
+        return respuesta;
+    }*/
+
+    private Result getVar(String nombre_var) {
+        Result var = new Result();
+
+        SimJS v = this.ctx.BuscarVariable(nombre_var);
+        if (v != null) {
+            if (!v.isEsArreglo()) {
+                var.setValor(v.getValor().getValor());
+                var.setTipo(v.getValor().getTipo());
+            }else{
+                
+                System.out.println("Es una arreglo :(");
+                return new Result();
+            }
+
+        }
+
+        return var;
     }
 
 }

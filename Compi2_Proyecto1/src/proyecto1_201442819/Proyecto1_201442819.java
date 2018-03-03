@@ -5,7 +5,6 @@
  */
 package proyecto1_201442819;
 
-import GeneradorCCSS.AnalizadorCCSS;
 import GeneradorCHTML.AnalizadorCHTML;
 import GeneradorCJS.AnalizadorCJS;
 import Interfaz.Navegador;
@@ -24,11 +23,11 @@ public class Proyecto1_201442819 {
      */
     public static void main(String[] args) {
         try {
-            Navegador nav = Navegador.getNavegador();
+            //Navegador nav = Navegador.getNavegador();
             //nav.setVisible(true);
-            //AnalizadorCJS.AnalizarCJS("src\\GeneradorCJS\\prueba_js.cjs");
+            AnalizadorCJS.AnalizarCJS("src\\GeneradorCJS\\prueba_js.cjs");
             //AnalizadorCCSS.AnalizarCCSS("src\\GeneradorCCSS\\prueba_css.ccss");
-            AnalizadorCHTML.AnalizarCH("src\\GeneradorCHTML\\prueba_ch.chtml");
+            //AnalizadorCHTML.AnalizarCH("src\\GeneradorCHTML\\prueba_ch.chtml");
         } catch (IOException ex) {
             Logger.getLogger(Proyecto1_201442819.class.getName()).log(Level.SEVERE, null, ex);
         }

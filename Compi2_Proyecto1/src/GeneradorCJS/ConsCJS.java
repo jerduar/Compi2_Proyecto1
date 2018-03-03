@@ -101,6 +101,8 @@ public class ConsCJS {
     //
     public static final Integer POT = 72;
     public static final Integer MOD = 73;
+    
+    public static final Integer ATEXTO2 = 74;
 
     private static String[] ROL = {"INICIO", "L1", "DEC", "FUN", "IF", "LLAM", "ASIG", "L_SEN", "SEN", "SWITCH",
         "FOR", "LID", "MSG", "SOUT", "LE", "E", "LCASO", "CASO", "N", "RET",
@@ -109,11 +111,11 @@ public class ConsCJS {
         ">", "<", ">=", "<=", "&&", "||", "!", "IF_ELSE", "POS_ARRE", "LLAM_P", "DOS",
         "DOO", "DO", "CONTEO", "ATEX", "IDC", "IDS", "IDO", "DEF", "DETENER", "ID_ID",
         "FUN_ID2", "FUN_SET", "FUN_OBS", "FUN_SET2", "FUN_OBS2", "DEC_ASIG", "LISTA_AR", "AR", "EL", "EA",
-        "ER", "^", "%"};
+        "ER", "^", "%","FUN_ATEXTO"};
 
     public static String RetornStringCSJ(Integer i) {
 
-        return (i < 0 || i > 73) ? "" : ROL[i];
+        return (i < 0 || i > 74) ? "" : ROL[i];
     }
 
 }

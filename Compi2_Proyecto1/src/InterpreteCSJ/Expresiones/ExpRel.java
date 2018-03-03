@@ -455,7 +455,14 @@ public class ExpRel {
     }
 
     private static Result CrearResult(boolean valor) {
-        return new Result(ConsJS.BOOL, valor + "");
+        String a;
+        if(valor){
+            a = "1";
+        }else{
+            a = "0";
+        }
+        
+        return new Result(ConsJS.BOOL, a);
     }
 
     private static int CompDate(Date op1, Date op2) {

@@ -1,7 +1,26 @@
 
 
-dIMV W{!"True"};
-dimv w;
+dIMV a;
+Dimv b;
+a : 34 + 45 + " La vida no vale nada";
+a : {3,5,"amigo"};
+b : {1.45," numero mágico"};
+Mensaje(b.atexto());
+
+'/si(10 < 11){
+    'Dimv a;
+    Mensaje(a.atexto());
+    Dimv b;
+    b : 10+1;
+    si(b == 10){
+        Mensaje("b es igual a " + b);
+    }sino{
+        Mensaje("b es igual a " + (b+9));
+    }
+}sino{
+    a : a + " Hurra!!!";
+    Mensaje(a);
+}/'
 
 
 

@@ -45,7 +45,6 @@ public class SenDeclaracion extends Sentencia {
             variable = SimJS.getSimVar(var);
             if (!t.InsertarSimJS(variable)) {
                 ManErr.InsertarError("", "Semantico", var.getFila(), var.getColumna(), "Ya existe una función " + var.getLexema());
-                
             } else {
 
             }
@@ -68,7 +67,7 @@ public class SenDeclaracion extends Sentencia {
                     
                     if (tam < 1) {
                         //ERROR
-                        System.out.println("Debe ser un número mayor que 0");
+                        System.out.println("Debe ser un número mayor que 1");
                     }
                     SimJS ar = SimJS.getSimArreglo(id, null, tam);
                     if (!t.InsertarSimJS(ar)) {

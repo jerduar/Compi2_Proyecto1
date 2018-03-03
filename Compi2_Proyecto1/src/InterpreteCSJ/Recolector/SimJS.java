@@ -6,12 +6,21 @@
 package InterpreteCSJ.Recolector;
 
 import AST.Nodo;
+import InterpreteCSJ.Expresiones.Result;
+import java.util.ArrayList;
 
 /**
  *
  * @author jerduar
  */
 public class SimJS {
+
+    /**
+     * @param key the key to set
+     */
+    public void setKey(Integer key) {
+        this.key = key;
+    }
 
     /**
      * @return the no_param
@@ -21,10 +30,11 @@ public class SimJS {
     }
     private Integer rol;
     private String nombre;
+    private Integer key;
     
     //ATRIBUTOS DE UNA VARIABLE
     private Integer tipo_var;
-    private Nodo valor;
+    private Result valor;
     private boolean esArreglo;
     
     //ATRIBUTOS DE UNA FUNCION
@@ -33,7 +43,7 @@ public class SimJS {
     private Integer no_param;
     
     //ATRIBUTOS DE UN ARREGLO
-    private Nodo elemento;
+    private ArrayList<Result> ArregloResult;
     private Integer no_elementos;
     
     
@@ -81,7 +91,7 @@ public class SimJS {
      * @param no_ele
      * @return SimJS de tipo Arreglo
      */
-    public static SimJS getSimArreglo(String nombre, Nodo ele, Integer no_ele){
+    public static SimJS getSimArreglo(String nombre, ArrayList<Result> ele, Integer no_ele){
         SimJS sim = new SimJS();
         sim.setElemento(ele);
         sim.setNo_elementos(no_ele);
@@ -137,14 +147,14 @@ public class SimJS {
     /**
      * @return the valor
      */
-    public Nodo getValor() {
+    public Result getValor() {
         return valor;
     }
 
     /**
      * @param valor the valor to set
      */
-    public void setValor(Nodo valor) {
+    public void setValor(Result valor) {
         this.valor = valor;
     }
 
@@ -179,15 +189,15 @@ public class SimJS {
     /**
      * @return the elemento
      */
-    public Nodo getElemento() {
-        return elemento;
+    public ArrayList<Result> getElemento() {
+        return this.ArregloResult;
     }
 
     /**
      * @param elemento the elemento to set
      */
-    public void setElemento(Nodo elemento) {
-        this.elemento = elemento;
+    public void setElemento(ArrayList <Result> nuevo) {
+        this.ArregloResult = nuevo;
     }
 
     /**
@@ -223,5 +233,12 @@ public class SimJS {
      */
     public void setEsArreglo(boolean esArreglo) {
         this.esArreglo = esArreglo;
+    }
+
+    /**
+     * @return the key
+     */
+    public Integer getKey() {
+        return key;
     }
 }

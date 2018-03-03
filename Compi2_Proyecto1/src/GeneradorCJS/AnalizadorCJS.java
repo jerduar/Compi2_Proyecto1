@@ -42,7 +42,7 @@ public class AnalizadorCJS {
 
             parserCJS parser = new parserCJS(scan);
             Nodo a = (Nodo) parser.parse().value;
-            a.DibujarAST(3);
+            a.DibujarAST(1);
             if (a != null) {
                 ManErr m = new ManErr();  
                 TablaSymCSJ t = RecolectorCSJ.LlenarTabla(m,a.getHijo(0));           

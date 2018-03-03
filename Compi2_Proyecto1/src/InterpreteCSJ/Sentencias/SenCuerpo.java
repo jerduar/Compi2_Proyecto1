@@ -33,11 +33,18 @@ public class SenCuerpo extends Sentencia {
                 
             }else if(sent.getCod() == ConsCJS.DEC){
                 r = new SenDeclaracion(sent.getHijo(0)).Ejecutar(t);
+            }else if(sent.getCod() == ConsCJS.ASIG){
+                r = new SenAsignacion(sent).Ejecutar(t);
+            }else if(sent.getCod() == ConsCJS.MSG){
+                r = new SenMsg(sent.getHijo(0)).Ejecutar(t);
+            }else if(sent.getCod() == ConsCJS.IF || sent.getCod() == ConsCJS.IF_ELSE){
+                r = new SenIf(sent).Ejecutar(t);
+            }else if(sent.getCod() == ConsCJS.ATEXTO){
+                //r = new SenAtexto(sent).Ejecutar(t);
             }
         }
         
         return r;
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
