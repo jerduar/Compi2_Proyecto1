@@ -12,6 +12,9 @@ import InterpreteCSJ.Recolector.ManErr;
 import InterpreteCSJ.Recolector.SimJS;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
 import InterpreteCSJ.Sentencias.SenAtexto;
+import InterpreteCSJ.Sentencias.senConteo;
+import InterpreteCSJ.Sentencias.senLlamada;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -40,7 +43,7 @@ public class Expresion {
     }
 
     public Result ResolverExpresion(Nodo raiz) {
-        Result r = new Result();
+        Result r;
         //E
         if (raiz.getCod() == ConsCJS.E) {
             return ResolverExpresion(raiz.getHijo(0));
@@ -89,9 +92,9 @@ public class Expresion {
 
         //SI ES UN INCREMENTO
         if (op.getCod() == ConsCJS.INCREMENTO) {
-            if (!(Auxiliar.esTipo(izq.getTipo(), ConsJS.NUM)) || Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL)) {
+            if (!(Auxiliar.esTipo(izq.getTipo(), ConsJS.NUM) || Auxiliar.esTipo(izq.getTipo(), ConsJS.BOOL))) {
                 //ERROR
-                System.out.println("No se puede incrementar en datos que no sean numeros");
+                System.out.println("No se puede incrementar en datos que no sean numeros o booelano Expresion");
                 return r;
             }
             return ExpArit.Incremento(izq);
@@ -281,15 +284,47 @@ public class Expresion {
         }
 
         if (hoja.getCod() == ConsJS.ID) {
-            return this.getVar(hoja.getLexema());
+            resultado = this.getVar(hoja.getLexema());
+            //System.out.println(hoja.getLexema());
+            return resultado;
         }
         
         if(hoja.getCod() == ConsCJS.ATEXTO || hoja.getCod() == ConsCJS.ATEXTO2){
-            System.out.println(hoja.getHijo(0).getLexema());
             resultado = new SenAtexto(hoja).Ejecutar(ctx);
+        }
+        
+        if(hoja.getCod() == ConsCJS.ARR){
+            return toArray(hoja.getHijo(0));
+        }
+        
+        if(hoja.getCod() == ConsCJS.LLAM || hoja.getCod() == ConsCJS.LLAM_P){
+            //System.out.println("Es llamada");
+            return new senLlamada(hoja).Ejecutar(ctx);
+        }
+        
+        if(hoja.getCod() == ConsCJS.ID_CONT){
+            return new senConteo(hoja).Ejecutar(ctx);
         }
 
         return resultado;
+    }
+    
+    private Result toArray(Nodo hoja){
+        Result respuesta = new Result();
+        
+        ArrayList<Result> lista = new ArrayList<>();
+        for(Nodo n: hoja.getHijos()){
+            Result res = new Expresion(n,this.ctx).ResolverExpresion();
+            if(!Auxiliar.esError(res.getTipo())){
+                lista.add(res);
+            }
+        }
+        
+        respuesta.setEsArreglo(true);
+        respuesta.setTipo(ConsJS.arreglo);
+        respuesta.setSoluciones(lista);
+        respuesta.setTam_arreglo(lista.size());
+        return respuesta;
     }
     
     /*private Result getATexto(Nodo n){
@@ -301,22 +336,13 @@ public class Expresion {
     }*/
 
     private Result getVar(String nombre_var) {
-        Result var = new Result();
-
-        SimJS v = this.ctx.BuscarVariable(nombre_var);
-        if (v != null) {
-            if (!v.isEsArreglo()) {
-                var.setValor(v.getValor().getValor());
-                var.setTipo(v.getValor().getTipo());
-            }else{
-                
-                System.out.println("Es una arreglo :(");
-                return new Result();
-            }
-
+        Result var;
+        var = this.ctx.BuscarVariable(nombre_var);
+        if (var != null) {
+            return var;
         }
 
-        return var;
+        return Result.EjecucionError();
     }
 
 }

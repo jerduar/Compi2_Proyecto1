@@ -1,54 +1,17 @@
 
+dimv a : prueba(6);
+mensaje(a);
 
-dIMV a;
-Dimv b;
-a : 34 + 45 + " La vida no vale nada";
-a : {3,5,"amigo"};
-b : {1.45," numero mágico"};
-Mensaje(b.atexto());
-
-'/si(10 < 11){
-    'Dimv a;
-    Mensaje(a.atexto());
-    Dimv b;
-    b : 10+1;
-    si(b == 10){
-        Mensaje("b es igual a " + b);
-    }sino{
-        Mensaje("b es igual a " + (b+9));
-    }
-}sino{
-    a : a + " Hurra!!!";
-    Mensaje(a);
-}/'
-
-
-
-funcion prueba(){
-
-}
-
-funcion prueba(){
+funcion prueba(h){
     
-	si(a > b > C > H && c*9 >= 5){
-		dIMV a : a{5};
-	}sino{
-		para(a:10;a > 20;++){
-			Dimv b : "True";
-                        Dimv c : "10/02/2018 04:56:09";
-                        a{4}: y{3};
-		}
-                a.conteo;
-                a.valor;
-                prueba2(a,b).valor;
-	}
-
-        mientras(b>45){}
-        
-        Dimv a : "tabla";
-        retornar DOCUMENTO.ObTEner(a);
-        
+    Si(h<=0){
+        retornar 1;
+    }
+    retornar h*prueba(h-1);
+    
 }
+
+
 
 Dimv ab;
 
@@ -81,7 +44,7 @@ funcion prueba2(ab,cd){
         }
 }
 
-Dimv a : 19 + comida(4,comida);
+'Dimv a : 19 + comida(4,comida);
 
 funcion comida(a,b){
 

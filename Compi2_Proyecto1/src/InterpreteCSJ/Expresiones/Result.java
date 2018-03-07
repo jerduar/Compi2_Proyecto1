@@ -26,6 +26,8 @@ public class Result {
     private ArrayList<Result> soluciones;
     private Integer dimensiones;
     private boolean esArreglo;
+    private Integer tam_arreglo;
+    private boolean esReturn;
     
     public Result() {
         this.tipo = ConsJS.ERROR;
@@ -60,6 +62,18 @@ public class Result {
     
     public static Result EjecucionError(){
         return new Result(ConsJS.ERROR, "", FAIL);
+    }
+    
+    public static Result Detener(){
+        return new Result(ConsJS.VOID,"",BREAK);
+    }
+    
+    public boolean esDetener(){
+        return this.status == BREAK;
+    }
+    
+    public boolean esRetorno(){
+        return this.esReturn;
     }
 
     /**
@@ -144,6 +158,34 @@ public class Result {
      */
     public void setEsArreglo(boolean esArreglo) {
         this.esArreglo = esArreglo;
+    }
+
+    /**
+     * @return the tam_arreglo
+     */
+    public Integer getTam_arreglo() {
+        return tam_arreglo;
+    }
+
+    /**
+     * @param tam_arreglo the tam_arreglo to set
+     */
+    public void setTam_arreglo(Integer tam_arreglo) {
+        this.tam_arreglo = tam_arreglo;
+    }
+
+    /**
+     * @return the esReturn
+     */
+    public boolean isEsReturn() {
+        return esReturn;
+    }
+
+    /**
+     * @param esReturn the esReturn to set
+     */
+    public void setEsReturn(boolean esReturn) {
+        this.esReturn = esReturn;
     }
     
     

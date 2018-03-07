@@ -27,7 +27,7 @@ public class SenAtexto extends Sentencia{
     @Override
     public Result Ejecutar(TablaSymCSJ t) {
         Result respuesta = new Result();
-        System.out.println(sentencia.getCod() + " " + ConsCJS.ATEXTO);
+        //System.out.println(sentencia.getCod() + " " + ConsCJS.ATEXTO);
         if(sentencia.getCod() == ConsCJS.ATEXTO){
             respuesta = id_texto(sentencia.getHijo(0),t);
             return respuesta;
@@ -38,7 +38,7 @@ public class SenAtexto extends Sentencia{
     private Result id_texto(Nodo id, TablaSymCSJ t){
         Result r = new Result();
         
-        SimJS var = t.BuscarVariable(id.getLexema());
+        Result var = t.BuscarVariable(id.getLexema());
         
         if(var == null){
             ManErr.InsertarError("", "Semantico", id.getFila(), id.getCod(), "No existe la variable " + id.getLexema());
@@ -50,13 +50,13 @@ public class SenAtexto extends Sentencia{
             return r;
         }
         
-        if(var.getElemento() == null){
+        if(var.getSoluciones() == null){
             r.setValor("");
             r.setTipo(ConsJS.CAD);
             return r;
         }
         
-        r.setValor(ArrToStr(var.getElemento()));
+        r.setValor(ArrToStr(var.getSoluciones()));
         r.setTipo(ConsJS.CAD);
         
         return r;

@@ -35,7 +35,7 @@ public class SimJS {
     //ATRIBUTOS DE UNA VARIABLE
     private Integer tipo_var;
     private Result valor;
-    private boolean esArreglo;
+    //private boolean esArreglo;
     
     //ATRIBUTOS DE UNA FUNCION
     private Nodo sentencias;
@@ -43,8 +43,8 @@ public class SimJS {
     private Integer no_param;
     
     //ATRIBUTOS DE UN ARREGLO
-    private ArrayList<Result> ArregloResult;
-    private Integer no_elementos;
+    //private ArrayList<Result> ArregloResult;
+    //private Integer no_elementos;
     
     
     
@@ -62,7 +62,7 @@ public class SimJS {
         sim.setNombre(variable.getLexema());
         sim.setRol(ConsJS.variable);
         sim.setNo_param(0);
-        sim.setEsArreglo(false);
+        //sim.setEsArreglo(false);
         return sim;
         
         
@@ -80,7 +80,7 @@ public class SimJS {
         sim.setParametros(funcion.getHijo(1));
         sim.setSentencias(funcion.getHijo(2));
         sim.setRol(ConsJS.funcion);
-        sim.setEsArreglo(false);
+        //sim.setEsArreglo(false);
         return sim;
     }
     
@@ -92,13 +92,19 @@ public class SimJS {
      * @return SimJS de tipo Arreglo
      */
     public static SimJS getSimArreglo(String nombre, ArrayList<Result> ele, Integer no_ele){
+        Result valor = new Result();
+        valor.setEsArreglo(true);
+        valor.setTam_arreglo(no_ele);
+        valor.setTipo(ConsJS.arreglo);
+        
         SimJS sim = new SimJS();
-        sim.setElemento(ele);
-        sim.setNo_elementos(no_ele);
+        sim.setValor(valor);
+        //sim.setElemento(ele);
+        //sim.setNo_elementos(no_ele);
         sim.setNombre(nombre);
         sim.setRol(ConsJS.variable);
         sim.setNo_param(0);
-        sim.setEsArreglo(true);
+        //sim.setEsArreglo(true);
         return sim;
     }
 
@@ -188,28 +194,28 @@ public class SimJS {
 
     /**
      * @return the elemento
-     */
+     
     public ArrayList<Result> getElemento() {
         return this.ArregloResult;
     }
 
     /**
      * @param elemento the elemento to set
-     */
+     
     public void setElemento(ArrayList <Result> nuevo) {
         this.ArregloResult = nuevo;
     }
 
     /**
      * @return the no_elementos
-     */
+     
     public Integer getNo_elementos() {
         return no_elementos;
     }
 
     /**
      * @param no_elementos the no_elementos to set
-     */
+     
     public void setNo_elementos(Integer no_elementos) {
         this.no_elementos = no_elementos;
     }
@@ -224,14 +230,14 @@ public class SimJS {
     /**
      * @return the esArreglo
      */
-    public boolean isEsArreglo() {
+    /*public boolean isEsArreglo() {
         return esArreglo;
     }
 
     /**
      * @param esArreglo the esArreglo to set
      */
-    public void setEsArreglo(boolean esArreglo) {
+    /*public void setEsArreglo(boolean esArreglo) {
         this.esArreglo = esArreglo;
     }
 

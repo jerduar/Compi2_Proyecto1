@@ -28,9 +28,11 @@ public class Proyecto1_201442819 {
             AnalizadorCJS.AnalizarCJS("src\\GeneradorCJS\\prueba_js.cjs");
             //AnalizadorCCSS.AnalizarCCSS("src\\GeneradorCCSS\\prueba_css.ccss");
             //AnalizadorCHTML.AnalizarCH("src\\GeneradorCHTML\\prueba_ch.chtml");
+            
         } catch (IOException ex) {
             Logger.getLogger(Proyecto1_201442819.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
     
 }

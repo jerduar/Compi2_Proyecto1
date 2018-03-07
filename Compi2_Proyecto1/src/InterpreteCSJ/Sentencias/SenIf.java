@@ -27,7 +27,7 @@ public class SenIf extends Sentencia {
     @Override
     public Result Ejecutar(TablaSymCSJ t) {
         Result exp = new Expresion(this.sentencia.getHijo(0),t).ResolverExpresion();
-        
+        Result respuesta = Result.EjecucionOK();
         if(Auxiliar.esError(exp.getTipo()) || exp.getValor() == null){
             ManErr.InsertarError("", "Semántico", 0, 0, "No se puedo evaluar la expresión correctamente");
             return Result.EjecucionError();
@@ -39,12 +39,17 @@ public class SenIf extends Sentencia {
         }
         
         if(Auxiliar.toBool(exp.getValor())){
-           return new SenCuerpo(this.sentencia.getHijo(1),false).Ejecutar(t.crearTablaHijo());
+           respuesta =  new SenCuerpo(this.sentencia.getHijo(1),false).Ejecutar(t.crearTablaHijo());
         }else if(sentencia.getCod() == ConsCJS.IF_ELSE){
-            return new SenCuerpo(this.sentencia.getHijo(2),false).Ejecutar(t.crearTablaHijo());
+           respuesta =  new SenCuerpo(this.sentencia.getHijo(2),false).Ejecutar(t.crearTablaHijo());
         }
-        
-        return Result.EjecucionOK();
+        t.LimpiarTabla();
+        if(respuesta.esRetorno()){
+            //System.out.println("Es retorno");
+            return respuesta;
+        }
+        respuesta = Result.EjecucionOK();
+        return respuesta;
     }
     
 }

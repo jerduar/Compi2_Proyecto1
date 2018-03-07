@@ -112,11 +112,6 @@ ASIG        ::=   ID:id DOS_PUNTOS E:e{:
                     RESULT.addHijo(e1);
                     RESULT.addHijo(e2);
                 :}
-                | ID:id DOS_PUNTOS ARREGLO:e{:
-                    RESULT = new Nodo(ConsCJS.ASIG);
-                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
-                    RESULT.addHijo(e);
-                :}
 ;
 
 LE          ::=   LE:le COMA E:e{:
@@ -156,6 +151,13 @@ LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
                 :}
                 | ID:id PUNTO CONTEO {:
                     RESULT = new Nodo(ConsCJS.ID_CONT);
+                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
+                    RESULT.addHijo(new Nodo(ConsCJS.CONTEO));
+                :}
+                | ID:id PAR_IZQ PAR_DER PUNTO CONTEO {:
+                    RESULT = new Nodo(ConsCJS.ID_CONT);
+                    Nodo b = new Nodo(ConsCJS.LLAM);
+                    b.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright))
                     RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
                     RESULT.addHijo(new Nodo(ConsCJS.CONTEO));
                 :}
@@ -203,8 +205,10 @@ LLAMADA     ::=   DOCUMENTO PUNTO OBTENER PAR_IZQ E:e PAR_DER PUNTO SET:set {:
                 :}
                 | ID:id PAR_IZQ LE:le PAR_DER PUNTO ATEXTO PAR_IZQ PAR_DER{:
                     RESULT = new Nodo(ConsCJS.ATEXTO2);
-                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
-                    RESULT.addHijo(le);
+                    Nodo llam = new Nodo(ConsCJS.LLAM_P);
+                    llam.addHijo(ConsCJS.ID,id,idleft,idright);
+                    llam.addHijo(le);
+                    RESULT.addHijo(llam);
                 :}
                 | ID:id PAR_IZQ PAR_DER PUNTO ATEXTO PAR_IZQ PAR_DER{:
                     RESULT = new Nodo(ConsCJS.ATEXTO2);
@@ -560,6 +564,10 @@ E           ::=   E:e1 AND:i E:e2{:
                 | ID:id {:
                     RESULT = new Nodo(ConsCJS.E);
                     RESULT.addHijo(new Nodo(ConsCJS.ID,id,idleft,idright));
+                :}
+                | ARREGLO:a{:
+                    RESULT = new Nodo(ConsCJS.E);
+                    RESULT.addHijo(a);
                 :}
                 | ID:id LLA_IZQ E:e LLA_DER{:
                     RESULT = new Nodo(ConsCJS.E);

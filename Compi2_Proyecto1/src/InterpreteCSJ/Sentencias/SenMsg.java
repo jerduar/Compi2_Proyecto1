@@ -9,6 +9,7 @@ import AST.Nodo;
 import InterpreteCSJ.Expresiones.Auxiliar;
 import InterpreteCSJ.Expresiones.Expresion;
 import InterpreteCSJ.Expresiones.Result;
+import InterpreteCSJ.Recolector.ManErr;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
 
 /**
@@ -27,8 +28,9 @@ public class SenMsg extends Sentencia{
         Result respuesta = e.ResolverExpresion();
         
         if(Auxiliar.esError(respuesta.getTipo())){
-            System.out.println("Es un error :(");
-            return Result.EjecucionOK();
+            ManErr.InsertarError("", "Semántico", this.sentencia.getFila(), this.sentencia.getColumna(), "No se puedo encontrar evaluar la expresion");
+            //System.out.println("Es un error :(");
+            return Result.EjecucionError();
         }else{
             System.out.println(respuesta.getValor());
             return Result.EjecucionError();
