@@ -15,16 +15,17 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author jerduar
+ * @author jerdu
  */
-public class SenMsg extends Sentencia{
+public class senSout extends Sentencia{
 
-    public SenMsg(Nodo sen) {
+    public senSout(Nodo sen) {
         super(sen);
     }
 
     @Override
     public Result Ejecutar(TablaSymCSJ t) {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         Expresion e = new Expresion(this.sentencia,t);
         Result respuesta = e.ResolverExpresion();
         
@@ -33,8 +34,8 @@ public class SenMsg extends Sentencia{
             //System.out.println("Es un error :(");
             return Result.EjecucionError();
         }else{
-            //System.out.println(respuesta.getValor());
-            JOptionPane.showMessageDialog(null, respuesta.getValor(), "INFORMACIÓN CJS", JOptionPane.INFORMATION_MESSAGE);
+            System.out.println(respuesta.getValor());
+            //JOptionPane.showMessageDialog(null, respuesta.getValor(), "INFORMACIÓN CJS", JOptionPane.INFORMATION_MESSAGE);
             return Result.EjecucionError();
         }
     }

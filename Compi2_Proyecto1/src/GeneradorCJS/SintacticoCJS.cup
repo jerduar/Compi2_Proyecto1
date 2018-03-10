@@ -108,9 +108,10 @@ ASIG        ::=   ID:id DOS_PUNTOS E:e{:
                 :}
                 | ID:id LLA_IZQ E:e1 LLA_DER DOS_PUNTOS E:e2{:
                     RESULT = new Nodo(ConsCJS.ASIG);
-                    RESULT.addHijo(ConsCJS.ID,id,idleft,idright);
-                    RESULT.addHijo(e1);
-                    RESULT.addHijo(e2);
+                    Nodo array = new Nodo(ConsCJS.POS_ARRE);
+                    Nodo id2 = new Nodo(ConsCJS.ID,id,idleft,idright);
+                    array.addHijo(id2,e1);
+                    RESULT.addHijo(array,e2);
                 :}
 ;
 

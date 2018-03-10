@@ -10,6 +10,7 @@ import GeneradorCJS.ConsCJS;
 import InterpreteCSJ.Expresiones.Auxiliar;
 import InterpreteCSJ.Expresiones.Expresion;
 import InterpreteCSJ.Expresiones.Result;
+import InterpreteCSJ.Recolector.ConsJS;
 import InterpreteCSJ.Recolector.ManErr;
 import InterpreteCSJ.Recolector.SimJS;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author jerdu
+ * @author jerduar
  */
 public class SenAsignacion extends Sentencia {
 
@@ -27,6 +28,55 @@ public class SenAsignacion extends Sentencia {
 
     @Override
     public Result Ejecutar(TablaSymCSJ t) {
+        
+        if(this.sentencia.getHijo(0).getCod() == ConsCJS.POS_ARRE){
+            Nodo arreglo = this.sentencia.getHijo(0);
+            
+            Result valor = t.BuscarVariable(arreglo.getHijo(0).getLexema());
+            if(Auxiliar.esError(valor.getTipo())){
+                ManErr.InsertarError("", "Semantico", -1, -1, "No se pudo ubicar la posición del arreglo SenAsig");
+                return Result.EjecucionError();
+            }
+            
+            if(!valor.isEsArreglo()){
+                ManErr.InsertarError("", "Semantico", -1, -1, "La variable debe ser una arreglo SenAsig");
+                return Result.EjecucionError();
+            }
+            
+            Result pos = new Expresion(arreglo.getHijo(1),t).ResolverExpresion();
+            
+            if(!Auxiliar.esTipo(pos.getTipo(), ConsJS.NUM)){
+                ManErr.InsertarError("", "Semantico", -1, -1, "el valor debe ser numérico SenAsig");
+                return Result.EjecucionError();
+            }
+            
+            Double posicion = Double.parseDouble(pos.getValor());
+            if((posicion < 0)){
+                ManErr.InsertarError("", "Semantico", -1, -1, "el valor debe ser mayor a -1 SenAsig");
+                return Result.EjecucionError();
+            }
+            
+            Result nuevo_valor = new Expresion(this.sentencia.getHijo(1),t).ResolverExpresion();
+            if(Auxiliar.esError(nuevo_valor.getTipo())){
+                ManErr.InsertarError("", "Semantico", -1, -1, "No se pudo evaluar la posición del arreglo SenAsig");
+                return Result.EjecucionError();
+            }
+            
+            if(posicion > valor.getTam_arreglo()-1){
+                ManErr.InsertarError("", "Semantico", -1, -1, "Fuera de rango SenAsig");
+                return Result.EjecucionError();
+            }
+            Result var = valor.getSoluciones().get(posicion.intValue());
+            
+            var.setEsArreglo(nuevo_valor.isEsArreglo());
+            var.setSoluciones(nuevo_valor.getSoluciones());
+            var.setTam_arreglo(nuevo_valor.getTam_arreglo());
+            var.setTipo(nuevo_valor.getTipo());
+            var.setValor(nuevo_valor.getValor());
+            return Result.EjecucionOK();
+            
+        }
+        
         if (this.sentencia.getHijo(1).getCod() == ConsCJS.ARR) {
             SimJS var = t.getVar(this.sentencia.getHijo(0).getLexema());
             if (var == null) {

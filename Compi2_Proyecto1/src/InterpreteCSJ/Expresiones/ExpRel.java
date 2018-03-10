@@ -8,9 +8,7 @@ package InterpreteCSJ.Expresiones;
 import InterpreteCSJ.Recolector.ConsJS;
 import java.util.Date;
 import java.util.Objects;
-import org.joda.time.DateTime;
 import org.joda.time.DateTimeComparator;
-import org.joda.time.DateTimeFieldType;
 
 /**
  *
@@ -26,7 +24,8 @@ public class ExpRel {
 
             //NUM == NUM
             if (Auxiliar.esTipo(der.getTipo(), ConsJS.NUM)) {
-                r = (der.getValor() == null ? izq.getValor() == null : der.getValor().equals(izq.getValor()));
+                
+                r = (der.getValor() == null ? izq.getValor() == null : Double.parseDouble(izq.getValor()) == Double.parseDouble(der.getValor()));
                 return CrearResult(r);
             }
             //NUM == CAD

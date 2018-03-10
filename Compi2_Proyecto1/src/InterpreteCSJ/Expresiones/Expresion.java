@@ -9,7 +9,6 @@ import AST.Nodo;
 import GeneradorCJS.ConsCJS;
 import InterpreteCSJ.Recolector.ConsJS;
 import InterpreteCSJ.Recolector.ManErr;
-import InterpreteCSJ.Recolector.SimJS;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
 import InterpreteCSJ.Sentencias.SenAtexto;
 import InterpreteCSJ.Sentencias.senConteo;
@@ -19,7 +18,7 @@ import java.util.Objects;
 
 /**
  *
- * @author jerdu
+ * @author jerduar
  */
 public class Expresion {
 
@@ -33,7 +32,6 @@ public class Expresion {
     public Expresion() {
         this.raiz = null;
         this.ctx = null;
-        //this.ma = ManejadorErrores.getInstance("Lienzo_prueba.lz");
     }
 
     public Expresion(Nodo expresion, TablaSymCSJ ctx) {
@@ -305,8 +303,42 @@ public class Expresion {
         if(hoja.getCod() == ConsCJS.ID_CONT){
             return new senConteo(hoja).Ejecutar(ctx);
         }
+        
+        if(hoja.getCod() == ConsCJS.POS_ARRE){
+            return getPosArray(hoja);
+        }
 
         return resultado;
+    }
+    
+    private Result getPosArray(Nodo hoja){
+        Result respuesta = new Result();
+        
+        Result valor_array = getVar(hoja.getHijo(0).getLexema());
+        if(!valor_array.isEsArreglo()){
+            ManErr.InsertarError("", "Semantico", hoja.getHijo(0).getFila(), hoja.getHijo(0).getColumna(), "Error al encontrar al vector " + hoja.getHijo(0).getLexema());
+            return respuesta;
+        }
+        
+        Result index = new Expresion(hoja.getHijo(1),this.ctx).ResolverExpresion();
+        if(!Auxiliar.esTipo(index.getTipo(), ConsJS.NUM)){
+            ManErr.InsertarError("", "Semantico", hoja.getHijo(0).getFila(), hoja.getHijo(0).getColumna(), "El índice debe ser un valor númerico");
+            return respuesta;
+        }
+        Integer i = Auxiliar.ToNum(index.getValor()).intValue();
+        if(i < 0){
+            ManErr.InsertarError("", "Semantico", hoja.getHijo(0).getFila(), hoja.getHijo(0).getColumna(), "El indice deber ser un valor mayor o igual a 0");
+            return respuesta;
+        }
+        
+        if(i >= valor_array.getTam_arreglo()){
+            ManErr.InsertarError("", "Semantico", hoja.getHijo(0).getFila(), hoja.getHijo(0).getColumna(), "Índice fuera de rango del vector " + hoja.getHijo(0).getLexema());
+            return respuesta;
+        }
+        
+        respuesta = valor_array.getSoluciones().get(i);
+        return respuesta;
+        
     }
     
     private Result toArray(Nodo hoja){
@@ -326,14 +358,6 @@ public class Expresion {
         respuesta.setTam_arreglo(lista.size());
         return respuesta;
     }
-    
-    /*private Result getATexto(Nodo n){
-        Result respuesta = new Result();
-        
-        SimJS vector = this.ctx.BuscarVariable(n.get)
-        
-        return respuesta;
-    }*/
 
     private Result getVar(String nombre_var) {
         Result var;

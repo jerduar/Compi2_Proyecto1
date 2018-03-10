@@ -17,7 +17,7 @@ import java.util.Objects;
 
 /**
  *
- * @author jerdu
+ * @author jerduar
  */
 public class SenDeclaracion extends Sentencia {
 

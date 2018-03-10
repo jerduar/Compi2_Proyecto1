@@ -8,7 +8,6 @@ package InterpreteCSJ.Sentencias;
 import AST.Nodo;
 import GeneradorCJS.ConsCJS;
 import InterpreteCSJ.Expresiones.Result;
-import InterpreteCSJ.Recolector.ManErr;
 import InterpreteCSJ.Recolector.TablaSymCSJ;
 
 /**
@@ -68,6 +67,8 @@ public class SenCuerpo extends Sentencia {
                 r = new senLlamada(sent).Ejecutar(t);
             }else if(sent.getCod() == ConsCJS.ID_CONT){
                 r = new senConteo(sent).Ejecutar(t);
+            }else if(sent.getCod() == ConsCJS.SOUT){
+                r = new senSout(sent.getHijo(0)).Ejecutar(t);
             }
             
             if(r.esRetorno()){
